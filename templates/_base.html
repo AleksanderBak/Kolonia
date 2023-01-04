@@ -29,7 +29,7 @@
         <div class="overflow-y-auto pt-10 px-3 scrollbar">
             <ul class="space-y-2">
                <li>
-                  <a href="#" class="flex items-center p-2 text-base font-normal rounded-lg text-white hover:bg-gray-700">
+                  <a href="/" class="flex items-center p-2 text-base font-normal rounded-lg text-white hover:bg-gray-700">
                     <span class="ml-3 font-font-1">Dashboard</span>
                   </a>
                </li>
@@ -100,7 +100,7 @@
                     </button>
                     <ul id="dropdown-3" class="hidden py-2 space-y-2">
                         <li>
-                            <a href="#" class="flex items-center p-2 pl-11 w-full text-base font-normal rounded-lg transition duration-75 group font-font-1 text-white hover:bg-gray-700">Pomieszczenia</a>
+                            <a href="{% url 'rooms' %}" class="flex items-center p-2 pl-11 w-full text-base font-normal rounded-lg transition duration-75 group font-font-1 text-white hover:bg-gray-700">Pomieszczenia</a>
                         </li>
                         <li>
                             <a href="#" class="flex items-center p-2 pl-11 w-full text-base font-normal rounded-lg transition duration-75 group font-font-1 text-white hover:bg-gray-700">Systemy</a>
@@ -141,15 +141,12 @@
     </nav>
     <div class="w-full h-full flex flex-col">
         <!-- top navbar -->
-        <div class="w-full h-20 flex flex-row items-center border-b-1 border-white/20">
-            <img class="ml-8 w-12 h-12 transition duration-75" src="{% static 'images/navbar-icon.svg' %}" alt="pic">
-            <span class="ml-3 font-font-1 text-white/40" >Kolonia marsjańska  &nbsp;&nbsp;&nbsp;/&nbsp;&nbsp;&nbsp;</span>
-            <span class="ml-3 font-font-1 text-white" >Dashboard</span>
-        </div>
+        
 
         <!-- main -->
         <div class="">
             {% block content %}
+
             {% endblock content %}
         </div>
     </div>
