@@ -26,15 +26,25 @@
     </div>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
     <script type="text/javascript"> window.CSRF_TOKEN = "{{ csrf_token }}"; </script>
+    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script type="text/javascript">
     $('#submitbutton').click(function(){
         let nazwa = document.getElementById("nazwa").value;
         let opis = document.getElementById("opis").value;
         let id = document.getElementById("nr_pomieszczenia").value;
-        let valid = true;
+        let valid = false;
         if (valid) {
-            $.ajax(
-            {
+            Swal.fire({
+                title: 'Sukces!',
+                color: 'black',
+                text: 'Pomieszczenie zostało zedytowane',
+                icon: 'success',
+                confirmButtonColor: '#3EB489',
+                confirmButtonText: 'Kontynuuj'
+            }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax(
+                {
                 type:"POST",
                 url: "",
                 data:{
@@ -44,12 +54,12 @@
                     id: id,
                 },
                 success: function() {
-                        alert("Sukces: zedytowano pomieszczenie");
-                        location.reload();
+                    location.reload();
                     }
-            })
+                });
+            }});
         } else {
-            alert("Data is not valid");
+            Swal.fire('Niepoprawne dane', '', 'error')
         }
     });
     </script>

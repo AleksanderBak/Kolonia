@@ -8,7 +8,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kolonia - Dashboard</title>
+    <title>Mars</title>
     <link rel="shortcut icon" type="image/svg" href="{% static 'images/Mars-icon.svg' %}"/>
     {% compress css %}
     <link rel="stylesheet" href="{% static 'src/output.css' %}">
@@ -34,7 +34,7 @@
                   </a>
                </li>
 
-               <li>
+               <!-- <li>
                   <button type="button" class="flex items-center p-2 w-full text-base font-normal rounded-lg transition duration-75 group text-white hover:bg-gray-700" aria-controls="dropdown-1" data-collapse-toggle="dropdown-1">
                         <img class="w-7 h-7 transition duration-75 text-gray-400 group-hover:text-white" src="{% static 'images/badania.svg' %}" alt="pic">
                         <span class="flex-1 ml-3 text-left whitespace-nowrap font-font-1" sidebar-toggle-item>Badania</span>
@@ -54,9 +54,9 @@
                            <a href="#" class="flex items-center p-2 pl-11 w-full text-base font-normal rounded-lg transition duration-75 group font-font-1 text-white hover:bg-gray-700">Wydarzenia</a>
                         </li>
                   </ul>
-               </li>
+               </li> -->
 
-               <li>
+               <!-- <li>
                 <button type="button" class="flex items-center p-2 w-full text-base font-normal rounded-lg transition duration-75 group text-white hover:bg-gray-700" aria-controls="dropdown-2" data-collapse-toggle="dropdown-2">
                     <img class="w-7 h-7 transition duration-75 text-gray-400 group-hover:text-white" src="{% static 'images/kolonizatorzy.svg' %}" alt="pic">
                     <span class="flex-1 ml-3 text-left whitespace-nowrap font-font-1" sidebar-toggle-item>Kolonizatorzy</span>
@@ -76,39 +76,55 @@
                          <a href="#" class="flex items-center p-2 pl-11 w-full text-base font-normal rounded-lg transition duration-75 group font-font-1 text-white hover:bg-gray-700">Specjalizacje</a>
                       </li>
                 </ul>
-                </li>
+                </li> -->
 
-                <li>
+                <!-- <li>
                     <a href="#" class="flex items-center p-2 text-base font-normal rounded-lg text-white hover:bg-gray-700">
                         <img class="w-7 h-7 transition duration-75 text-gray-400 group-hover:text-white" src="{% static 'images/pojazdy.svg' %}" alt="pic">
                        <span class="ml-3 font-font-1">Pojazdy</span>
                     </a>
-                </li>
+                </li> -->
 
                 <li>
-                    <a href="#" class="flex items-center p-2 text-base font-normal rounded-lg text-white hover:bg-gray-700">
+                    <button type="button" class="flex items-center p-2 w-full text-base font-normal rounded-lg transition duration-75 group text-white hover:bg-gray-700" aria-controls="dropdown-5" data-collapse-toggle="dropdown-5">
                         <img class="w-7 h-7 transition duration-75 text-gray-400 group-hover:text-white" src="{% static 'images/Zasoby.svg' %}" alt="pic">
-                        <span class="ml-3 font-font-1">Zasoby</span>
-                    </a>
-                </li>
-
-                <li>
-                    <button type="button" class="flex items-center p-2 w-full text-base font-normal rounded-lg transition duration-75 group text-white hover:bg-gray-700" aria-controls="dropdown-3" data-collapse-toggle="dropdown-3">
-                        <img class="w-7 h-7 transition duration-75 text-gray-400 group-hover:text-white" src="{% static 'images/pomieszczenia.svg' %}" alt="pic">
-                        <span class="flex-1 ml-3 text-left whitespace-nowrap font-font-1" sidebar-toggle-item>Pomieszczenia</span>
+                        <span class="flex-1 ml-3 text-left whitespace-nowrap font-font-1" sidebar-toggle-item>Zasoby</span>
                         <svg sidebar-toggle-item class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
                     </button>
-                    <ul id="dropdown-3" class="hidden py-2 space-y-2">
+                    <ul id="dropdown-5" class="hidden py-2 space-y-2">
                         <li>
-                            <a href="{% url 'rooms' %}" class="flex items-center p-2 pl-11 w-full text-base font-normal rounded-lg transition duration-75 group font-font-1 text-white hover:bg-gray-700">Pomieszczenia</a>
+                            <a href="{% url 'resources' %}" class="flex items-center p-2 pl-11 w-full text-base font-normal rounded-lg transition duration-75 group font-font-1 text-white hover:bg-gray-700">Zasoby</a>
                         </li>
                         <li>
-                            <a href="#" class="flex items-center p-2 pl-11 w-full text-base font-normal rounded-lg transition duration-75 group font-font-1 text-white hover:bg-gray-700">Systemy</a>
+                            <a href="{% url 'room_res' %}" class="flex items-center p-2 pl-11 w-full text-base font-normal rounded-lg transition duration-75 group font-font-1 text-white hover:bg-gray-700">Zasoby + Pomieszczenia</a>
                         </li>
                     </ul>
                 </li>
 
                 <li>
+                    <a href="{% url 'rooms' %}" class="flex items-center p-2 text-base font-normal rounded-lg text-white hover:bg-gray-700">
+                        <img class="w-7 h-7 transition duration-75 text-gray-400 group-hover:text-white" src="{% static 'images/pomieszczenia.svg' %}" alt="pic">
+                       <span class="ml-3 font-font-1">Pomieszczenia</span>
+                    </a>
+                </li> 
+
+                <li>
+                    <button type="button" class="flex items-center p-2 w-full text-base font-normal rounded-lg transition duration-75 group text-white hover:bg-gray-700" aria-controls="dropdown-3" data-collapse-toggle="dropdown-3">
+                        <img class="w-7 h-7 transition duration-75 text-gray-400 group-hover:text-white" src="{% static 'images/systemy.svg' %}" alt="pic">
+                        <span class="flex-1 ml-3 text-left whitespace-nowrap font-font-1" sidebar-toggle-item>Systemy</span>
+                        <svg sidebar-toggle-item class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
+                    </button>
+                    <ul id="dropdown-3" class="hidden py-2 space-y-2">
+                        <li>
+                            <a href="{% url 'systems' %}" class="flex items-center p-2 pl-11 w-full text-base font-normal rounded-lg transition duration-75 group font-font-1 text-white hover:bg-gray-700">Systemy</a>
+                        </li>
+                        <li>
+                            <a href="#" class="flex items-center p-2 pl-11 w-full text-base font-normal rounded-lg transition duration-75 group font-font-1 text-white hover:bg-gray-700">Systemy + Pomieszczenia</a>
+                        </li>
+                    </ul>
+                </li>
+
+                <!-- <li>
                     <button type="button" class="flex items-center p-2 w-full text-base font-normal rounded-lg transition duration-75 group text-white hover:bg-gray-700" aria-controls="dropdown-4" data-collapse-toggle="dropdown-4">
                         <img class="w-7 h-7 transition duration-75 text-gray-400 group-hover:text-white" src="{% static 'images/zadania.svg' %}" alt="pic">
                         <span class="flex-1 ml-3 text-left whitespace-nowrap font-font-1" sidebar-toggle-item>Zadania</span>
@@ -137,12 +153,9 @@
                     </a>
                 </li>
             </ul>
-         </div>
+         </div>-->
     </nav>
-    <div class="w-full h-full flex flex-col">
-        <!-- top navbar -->
-        
-
+    <div class="w-full h-full flex flex-col"> 
         <!-- main -->
         <div class="">
             {% block content %}
