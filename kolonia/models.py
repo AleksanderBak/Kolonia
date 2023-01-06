@@ -41,3 +41,26 @@ class Systemy(models.Model):
     class Meta:
         managed = False
         db_table = "systemy"
+
+
+class PomieszczeniaSystemy(models.Model):
+    nr_pomieszczenia = models.OneToOneField(
+        Pomieszczenia, models.DO_NOTHING, db_column="nr_pomieszczenia", primary_key=True
+    )
+    id_systemu = models.ForeignKey("Systemy", models.DO_NOTHING, db_column="id_systemu")
+
+    class Meta:
+        managed = False
+        db_table = "pomieszczenia_systemy"
+        unique_together = (("nr_pomieszczenia", "id_systemu"),)
+
+
+class Badania(models.Model):
+    id_badania = models.IntegerField(primary_key=True)
+    nazwa = models.CharField(max_length=32)
+    opis = models.CharField(max_length=256)
+    data_wykonywania = models.DateField()
+
+    class Meta:
+        managed = False
+        db_table = "badania"

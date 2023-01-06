@@ -23,7 +23,7 @@
                 <label for="email" class="block mb-2 text-lg font-semibold text-white/40">Numer pomieszczenia</label>
                 <select id="nr_pomieszczenia" type="text" class="bg-white/10 border border-white/10 text-white text-sm rounded-lg focus:ring-blue-500/30 focus:border-blue-500/50 block w-full p-2.5" required>
                     {% for p in Pomieszczenia %}
-                    <option class="bg-main-dark text-white" value="{{p.nr_pomieszczenia}}">{{p.nr_pomieszczenia}}</option>
+                    <option class="bg-main-dark text-white" value="{{p.nr_pomieszczenia}}">{{p.nr_pomieszczenia}} - {{p.nazwa}}</option>
                     {% endfor %}
                   </select>
               </div>

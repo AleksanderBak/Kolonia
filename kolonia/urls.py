@@ -15,13 +15,19 @@ urlpatterns = [
     # Pomieszczenia + Zasoby
     path("pomieszczenia_zasoby", views.roomRes, name="room_res"),
     path("pomieszczenia_zasoby/new", views.roomResNew, name="room_res_new"),
-    path("pomieszczenia_zasoby/<id>/<nazwa>", views.roomResEdit, name="room_res_edit"),
+    path("pomieszczenia_zasoby/edit/<id>", views.roomResEdit, name="room_res_edit"),
     # Systemy
     path("systemy", views.systems, name="systems"),
     path("systemy/new", views.systemsNew, name="systems_new"),
     path("systemy/<id>", views.systemsEdit, name="systems_edit"),
     # Pomieszczenia + Systemy
+    path("pomieszczenia_systemy", views.roomSys, name="room_sys"),
+    path("pomieszczenia_systemy/new", views.roomSysNew, name="room_sys_new"),
+    path("pomieszczenia_systemy/edit/<id>", views.roomSysEdit, name="room_sys_edit"),
     # Badania
+    path("badania", views.research, name="research"),
+    path("badania/new", views.researchNew, name="research_new"),
+    path("badania/edit/<id>", views.researchEdit, name="research_edit"),
     # Badania + Pomieszczenia
     # Pojazdy
     # Badania + Pojazdy

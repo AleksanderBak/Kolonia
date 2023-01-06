@@ -1,0 +1,86 @@
+{% extends "_base.html" %}
+
+{% load compress %}
+{% load static %}
+
+{% block content %}
+    <div class="w-full h-20 flex flex-row items-center border-b-1 border-white/20 font-font-1">
+        <img class="ml-8 w-12 h-12 transition duration-75" src="{% static 'images/navbar-icon.svg' %}" alt="pic">
+        <span class="ml-3 font-font-1 text-white/40" >Kolonia marsjańska  &nbsp;&nbsp;&nbsp;/&nbsp;&nbsp;&nbsp;</span>
+        <span class="ml-3 font-font-1 text-white" >Edytowanie zasobów powiązanych z pomieszczeniami</span>
+    </div>
+    
+    <div class="p-10 font-font-1 w-full flex pl-28">
+        <div class="w-1/2">
+            <div class="mb-6">
+              <label for="email" class="block mb-2 text-lg font-semibold text-white/40">Pomieszczenie</label>
+              <select id="nr_pomieszczenia" type="text" class="bg-white/10 border border-white/10 text-white text-sm rounded-lg focus:ring-blue-500/30 focus:border-blue-500/50 block w-full p-2.5" required>
+                {% for p in Pomieszczenia %}
+                    <option class="bg-main-dark text-white" value="{{p.nr_pomieszczenia}}" {% if p.nr_pomieszczenia == id_pom %}selected{% endif %}>{{p.nr_pomieszczenia}} - {{p.nazwa}}</option>
+                {% endfor %}
+              </select>
+            </div>  
+            <div class="mb-6">
+              <label for="email" class="block mb-2 text-lg font-semibold text-white/40">Zasób</label>
+              <select id="zasob" type="text" class="bg-white/10 border border-white/10 text-white text-sm rounded-lg focus:ring-blue-500/30 focus:border-blue-500/50 block w-full p-2.5" required>
+                {% for z in Zasoby %}
+                    <option class="bg-main-dark text-white" value="{{z.nazwa}}" {% if z.nazwa == zasob %}selected{% endif %}>{{z.nazwa}}</option>
+                {% endfor %}
+              </select>
+            </div>
+            <div class="mb-6">
+                <label for="password" class="block mb-2 text-lg font-semibold text-white/40">Liczba</label>
+                <input id="liczba" value="{{Zawartosc.0}}" type="number" class="bg-white/10 border border-white/10 text-white text-sm rounded-lg focus:ring-blue-500/30 focus:border-blue-500/50 block w-full p-2.5" required>
+            </div>
+            <div class="mb-6">
+                <label for="password" class="block mb-2 text-lg font-semibold text-white/40">Jednostka</label>
+                <input id="jednostka" value="{{Zawartosc.2}}" type="text" class="bg-white/10 border border-white/10 text-white text-sm rounded-lg focus:ring-blue-500/30 focus:border-blue-500/50 block w-full p-2.5" required>
+            </div>
+            <button id="submitbutton" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center">Zapisz</button>
+        </div>
+    </div>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+    <script type="text/javascript"> window.CSRF_TOKEN = "{{ csrf_token }}"; </script>
+    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script type="text/javascript">
+    $('#submitbutton').click(function(){
+        let id_pom = document.getElementById("nr_pomieszczenia").value;
+        let zasob = document.getElementById("zasob").value;
+        let liczba = document.getElementById("liczba").value;
+        let jednostka = document.getElementById("jednostka").value;
+        let valid = true;
+        if (valid) {
+            $.ajax(
+                {
+                type:"POST",
+                url: "",
+                data:{
+                    csrfmiddlewaretoken: window.CSRF_TOKEN,
+                    id_pom: id_pom,
+                    zasob: zasob,
+                    liczba: liczba,
+                    jednostka: jednostka,
+                },
+                success: function() {
+                Swal.fire({
+                    title: 'Sukces!',
+                    text: 'Powiązanie zostało zedytowane',
+                    icon: 'success',
+                    confirmButtonColor: '#3EB489',
+                    confirmButtonText: 'Kontynuuj'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        history.back();
+                    }
+                });
+                },
+                error: function () {
+                    Swal.fire('Taki zasób już istnieje w tym pomieszczeniu', '', 'error')
+                }
+            }) 
+        }else {
+            Swal.fire('Niepoprawne dane', '', 'error')
+        }
+    });
+    </script>
+{% endblock content %}

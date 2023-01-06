@@ -89,6 +89,9 @@
                 },
                 success: function() {
                     location.reload();
+                },
+                error: function() {
+                    Swal.fire('Błąd', 'Nie można usunąć rekordu ze względu na istniejące powiązania w innych tabelach', 'error');
                 }
             })
             } else if (result.isDenied) {
