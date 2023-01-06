@@ -7,7 +7,7 @@
     <div class="w-full h-20 flex flex-row items-center border-b-1 border-white/20 font-font-1">
         <img class="ml-8 w-12 h-12 transition duration-75" src="{% static 'images/navbar-icon.svg' %}" alt="pic">
         <span class="ml-3 font-font-1 text-white/40" >Kolonia marsjańska  &nbsp;&nbsp;&nbsp;/&nbsp;&nbsp;&nbsp;</span>
-        <span class="ml-3 font-font-1 text-white" >Pomieszczenia</span>
+        <span class="ml-3 font-font-1 text-white" >Pojazdy</span>
     </div>
     <div class="p-10 font-font-1"> 
         <form method="get">
@@ -31,21 +31,21 @@
         <div class="relative overflow-x-auto">
             <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
                 <colgroup>
-                    <col span="1" style="width: 15%;">
                     <col span="1" style="width: 20%;">
-                    <col span="1" style="width: 45%;">
+                    <col span="1" style="width: 40%;">
+                    <col span="1" style="width: 20%;">
                     <col span="1" style="width: 20%;">
                  </colgroup>
                 <thead class="text-xs text-white/40 uppercase bg-main-dark border-b border-white/20">
                     <tr>
                         <th scope="col" class="px-6 py-3">
-                            Numer pomieszczenia
+                            Nazwa pojazdy
                         </th>
                         <th scope="col" class="px-6 py-3">
-                            Nazwa
+                            Przeznaczenie
                         </th>
                         <th scope="col" class="px-6 py-3">
-                            Opis
+                            Ilość miejsc
                         </th>
                         <th scope="col" class="px-6 py-3">
                             Akcje
@@ -53,22 +53,22 @@
                     </tr>
                 </thead>
                 <tbody>
-                    {% for pom in Pomieszczenia %}
+                    {% for p in Pojazdy %}
                     <tr class="bg-main-dark border-b border-white/20 text-white">
                         <th scope="row" class="px-6 py-4 font-medium whitespace-nowrap">
-                            {{pom.nr_pomieszczenia}}
+                            {{p.nazwa}}
                         </th>
                         <th scope="row" class="px-6 py-4 font-medium whitespace-nowrap">
-                            {{pom.nazwa}}
+                            {{p.przeznaczenie}}
                         </th>
                         <td class="px-6 py-4">
-                            {{pom.opis}}
+                            {{p.ilosc_miejsc}}
                         </td>
                         <td class="px-6 py-4">
-                            <a href="{{request.path}}/{{pom.nr_pomieszczenia}}">
+                            <a href="{{request.path}}/edit/{{p.id_pojazdu}}">
                                 <button type="button" class="text-yellow-400 hover:text-white border border-yellow-400 hover:bg-yellow-500 focus:ring-4 focus:outline-none focus:ring-yellow-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 mb-2 dark:border-yellow-300 dark:text-yellow-300 dark:hover:text-white dark:hover:bg-yellow-400 dark:focus:ring-yellow-900">Edytuj</button>
                             </a>
-                            <button type="button" value="{{pom.nr_pomieszczenia}}" class="deletebutton text-red-700 hover:text-white border border-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 mb-2 dark:border-red-500 dark:text-red-500 dark:hover:text-white dark:hover:bg-red-600 dark:focus:ring-red-900">Usuń</button>
+                            <button type="button" value="{{p.id_pojazdu}}" class="deletebutton text-red-700 hover:text-white border border-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 mb-2 dark:border-red-500 dark:text-red-500 dark:hover:text-white dark:hover:bg-red-600 dark:focus:ring-red-900">Usuń</button>
                         </td>
                     </tr>
                     {% endfor %}
@@ -85,7 +85,7 @@
         Swal.fire({
             title: 'Jesteś pewny?',
             color: 'black',
-            text: 'Czy na pewno chcesz usunąć to pomieszczenie?',
+            text: 'Czy na pewno chcesz usunąć ten pojazd?',
             icon: 'question',
             showDenyButton: true,
             confirmButtonText: 'Usuń',

@@ -45,12 +45,12 @@
                     confirmButtonText: 'Kontynuuj'
                 }).then((result) => {
                     if (result.isConfirmed) {
-                        history.back();
+                        window.location=document.referrer;
                     }
                 });
                 },
                 error: function () {
-                    Swal.fire('Zasób o podanej nazwie już istnieje', '', 'error')
+                    Swal.fire('Błąd', 'Zasób o podanej nazwie istnieje już w tym pomieszczeniu lub istnieją zależności w innych tabelach', 'error')
                 }
             }) 
         }else {

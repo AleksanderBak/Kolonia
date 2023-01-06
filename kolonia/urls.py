@@ -30,8 +30,14 @@ urlpatterns = [
     path("badania/edit/<id>", views.researchEdit, name="research_edit"),
     # Badania + Pomieszczenia
     # Pojazdy
+    path("pojazdy", views.vehicle, name="vehicle"),
+    path("pojazdy/new", views.vehicleNew, name="vehicle_new"),
+    path("pojazdy/edit/<id>", views.vehicleEdit, name="vehicle_edit"),
     # Badania + Pojazdy
     # Wydarzenia
+    path("wydarzenia", views.events, name="events"),
+    path("wydarzenia/new", views.eventsNew, name="events_new"),
+    path("wydarzenia/edit/<id>", views.eventsEdit, name="events_edit"),
     # Badania + Wydarzenia
     # Zadania
     # Zadania + Wydarzenia

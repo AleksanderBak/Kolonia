@@ -64,3 +64,28 @@ class Badania(models.Model):
     class Meta:
         managed = False
         db_table = "badania"
+
+
+class Pojazdy(models.Model):
+    id_pojazdu = models.IntegerField(primary_key=True)
+    nazwa = models.CharField(max_length=32)
+    przeznaczenie = models.CharField(max_length=32)
+    ilosc_miejsc = models.IntegerField()
+
+    class Meta:
+        managed = False
+        db_table = "pojazdy"
+
+
+class Wydarzenia(models.Model):
+    id_wydarzenia = models.IntegerField(primary_key=True)
+    nazwa = models.CharField(max_length=32)
+    opis = models.CharField(max_length=256)
+    potencjal_badawczy = models.IntegerField()
+    poziom_zagrozenia = models.IntegerField()
+    rodzaj_wydarzenia = models.CharField(max_length=32)
+    typ = models.CharField(max_length=10)
+
+    class Meta:
+        managed = False
+        db_table = "wydarzenia"

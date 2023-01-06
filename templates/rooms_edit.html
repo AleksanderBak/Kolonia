@@ -32,18 +32,9 @@
         let nazwa = document.getElementById("nazwa").value;
         let opis = document.getElementById("opis").value;
         let id = document.getElementById("nr_pomieszczenia").value;
-        let valid = false;
+        let valid = true;
         if (valid) {
-            Swal.fire({
-                title: 'Sukces!',
-                color: 'black',
-                text: 'Pomieszczenie zostało zedytowane',
-                icon: 'success',
-                confirmButtonColor: '#3EB489',
-                confirmButtonText: 'Kontynuuj'
-            }).then((result) => {
-            if (result.isConfirmed) {
-                $.ajax(
+            $.ajax(
                 {
                 type:"POST",
                 url: "",
@@ -52,13 +43,26 @@
                     nazwa: nazwa,
                     opis: opis,
                     id: id,
+
                 },
                 success: function() {
-                    location.reload();
+                Swal.fire({
+                    title: 'Sukces!',
+                    text: 'Pomieszczenie zostało zedytowane',
+                    icon: 'success',
+                    confirmButtonColor: '#3EB489',
+                    confirmButtonText: 'Kontynuuj'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        window.location=document.referrer;
                     }
                 });
-            }});
-        } else {
+                },
+                error: function () {
+                    Swal.fire('Wystąpił błąd w trakcie edytowania pomieszczenia', '', 'error')
+                }
+            }) 
+        }else {
             Swal.fire('Niepoprawne dane', '', 'error')
         }
     });

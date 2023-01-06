@@ -7,6 +7,8 @@ from .models import (
     Systemy,
     PomieszczeniaSystemy,
     Badania,
+    Pojazdy,
+    Wydarzenia,
 )
 
 # Create your views here.
@@ -288,7 +290,7 @@ def research(request):
 
     if request.method == "GET" and "search" in request.GET:
         phrase = request.GET["search"].upper()
-        query = """SELECT * FROM badania WHERE UPPER(id_badania) like '%%{a1}%%' or UPPER(nazwa) like '%%{a2}%%' or UPPER(opis) like '%%{a3}%%' or UPPER(data_wykonywania) like '%%{a3}%%';"""
+        query = """SELECT * FROM badania WHERE UPPER(id_badania) like '%%{a1}%%' or UPPER(nazwa) like '%%{a2}%%' or UPPER(opis) like '%%{a3}%%' or UPPER(data_wykonywania) like '%%{a4}%%';"""
         output = Badania.objects.raw(
             query.format(a1=phrase, a2=phrase, a3=phrase, a4=phrase)
         )
@@ -313,9 +315,115 @@ def researchEdit(request, id):
         desc = request.POST["opis"]
         date = request.POST["data"]
         id = request.POST["id"]
-        Pomieszczenia.objects.filter(nr_pomieszczenia=id).update(
-            nazwa=name, opis=desc, data_wykonania=date
+        Badania.objects.filter(id_badania=id).update(
+            nazwa=name, opis=desc, data_wykonywania=date
         )
     query = "SELECT * FROM badania WHERE id_badania={id}".format(id=id)
     output = Badania.objects.raw(query)[0]
     return render(request, "research_edit.html", {"Badanie": output})
+
+
+def vehicle(request):
+    if request.method == "POST":
+        id = request.POST["id"]
+        Pojazdy.objects.get(id_pojazdu=id).delete()
+
+    if request.method == "GET" and "search" in request.GET:
+        phrase = request.GET["search"].upper()
+        query = """SELECT * FROM pojazdy WHERE UPPER(id_pojazdu) like '%%{a1}%%' or UPPER(nazwa) like '%%{a2}%%' or UPPER(przeznaczenie) like '%%{a3}%%' or UPPER(ilosc_miejsc) like '%%{a4}%%';"""
+        output = Pojazdy.objects.raw(
+            query.format(a1=phrase, a2=phrase, a3=phrase, a4=phrase)
+        )
+        return render(request, "vehicle.html", {"Pojazdy": output})
+
+    output = Pojazdy.objects.raw("SELECT * FROM pojazdy")
+    return render(request, "vehicle.html", {"Pojazdy": output})
+
+
+def vehicleNew(request):
+    if request.method == "POST":
+        name = request.POST["nazwa"]
+        use = request.POST["przeznaczenie"]
+        num = request.POST["miejsca"]
+        Pojazdy.objects.create(nazwa=name, przeznaczenie=use, ilosc_miejsc=num)
+    return render(request, "vehicle_new.html")
+
+
+def vehicleEdit(request, id):
+    if request.method == "POST":
+        name = request.POST["nazwa"]
+        use = request.POST["przeznaczenie"]
+        num = request.POST["miejsca"]
+        id = request.POST["id"]
+        Pojazdy.objects.filter(id_pojazdu=id).update(
+            nazwa=name, przeznaczenie=use, ilosc_miejsc=num
+        )
+    query = "SELECT * FROM pojazdy WHERE id_pojazdu={id}".format(id=id)
+    output = Pojazdy.objects.raw(query)[0]
+    return render(request, "vehicle_edit.html", {"Pojazd": output})
+
+
+def events(request):
+    if request.method == "POST":
+        id = request.POST["id"]
+        Wydarzenia.objects.get(id_wydarzenia=id).delete()
+
+    if request.method == "GET" and "search" in request.GET:
+        phrase = request.GET["search"].upper()
+        query = """SELECT * FROM wydarzenia WHERE UPPER(id_wydarzenia) like '%%{a1}%%' or UPPER(nazwa) like '%%{a2}%%' or UPPER(opis) like '%%{a3}%%' or UPPER(potencjal_badawczy) like '%%{a4}%%' or UPPER(poziom_zagrozenia) like '%%{a5}%%' or UPPER(rodzaj_wydarzenia) like '%%{a6}%%' or UPPER(typ) like '%%{a7}%%';"""
+        output = Wydarzenia.objects.raw(
+            query.format(
+                a1=phrase,
+                a2=phrase,
+                a3=phrase,
+                a4=phrase,
+                a5=phrase,
+                a6=phrase,
+                a7=phrase,
+            )
+        )
+        return render(request, "events.html", {"Wydarzenia": output})
+
+    output = Wydarzenia.objects.raw("SELECT * FROM wydarzenia")
+    return render(request, "events.html", {"Wydarzenia": output})
+
+
+def eventsNew(request):
+    if request.method == "POST":
+        name = request.POST["nazwa"]
+        desc = request.POST["opis"]
+        pot = request.POST["potencjal"]
+        dang = request.POST["zagroz"]
+        rodzaj = request.POST["rodzaj"]
+        typ = request.POST["typ"]
+        Wydarzenia.objects.create(
+            nazwa=name,
+            opis=desc,
+            potencjal_badawczy=pot,
+            poziom_zagrozenia=dang,
+            rodzaj_wydarzenia=rodzaj,
+            typ=typ,
+        )
+    return render(request, "events_new.html")
+
+
+def eventsEdit(request, id):
+    if request.method == "POST":
+        id = request.POST["id"]
+        name = request.POST["nazwa"]
+        desc = request.POST["opis"]
+        pot = request.POST["potencjal"]
+        dang = request.POST["zagroz"]
+        rodzaj = request.POST["rodzaj"]
+        typ = request.POST["typ"]
+        Wydarzenia.objects.filter(id_wydarzenia=id).update(
+            nazwa=name,
+            opis=desc,
+            potencjal_badawczy=pot,
+            poziom_zagrozenia=dang,
+            rodzaj_wydarzenia=rodzaj,
+            typ=typ,
+        )
+    query = "SELECT * FROM wydarzenia WHERE id_wydarzenia={id}".format(id=id)
+    output = Wydarzenia.objects.raw(query)[0]
+    return render(request, "events_edit.html", {"Wydarzenie": output})
