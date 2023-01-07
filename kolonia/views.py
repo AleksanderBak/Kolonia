@@ -9,6 +9,10 @@ from .models import (
     Badania,
     Pojazdy,
     Wydarzenia,
+    Zadania,
+    Kolonizatorzy,
+    Specjalizacje,
+    Doswiadczenia,
 )
 
 # Create your views here.
@@ -427,3 +431,215 @@ def eventsEdit(request, id):
     query = "SELECT * FROM wydarzenia WHERE id_wydarzenia={id}".format(id=id)
     output = Wydarzenia.objects.raw(query)[0]
     return render(request, "events_edit.html", {"Wydarzenie": output})
+
+
+def tasks(request):
+    if request.method == "POST":
+        id = request.POST["id"]
+        Zadania.objects.get(id_zadania=id).delete()
+
+    if request.method == "GET" and "search" in request.GET:
+        phrase = request.GET["search"].upper()
+        query = """SELECT * FROM zadania WHERE UPPER(id_zadania) like '%%{a1}%%' or UPPER(nazwa) like '%%{a2}%%' or UPPER(opis) like '%%{a3}%%' or UPPER(data_wykonywania) like '%%{a4}%%';"""
+        output = Zadania.objects.raw(
+            query.format(a1=phrase, a2=phrase, a3=phrase, a4=phrase)
+        )
+        return render(request, "tasks.html", {"Zadania": output})
+
+    output = Zadania.objects.raw("SELECT * FROM zadania")
+    return render(request, "tasks.html", {"Zadania": output})
+
+
+def tasksNew(request):
+    if request.method == "POST":
+        name = request.POST["nazwa"]
+        desc = request.POST["opis"]
+        date = request.POST["data"]
+        Zadania.objects.create(nazwa=name, opis=desc, data_wykonywania=date)
+    return render(request, "tasks_new.html")
+
+
+def tasksEdit(request, id):
+    if request.method == "POST":
+        name = request.POST["nazwa"]
+        desc = request.POST["opis"]
+        date = request.POST["data"]
+        id = request.POST["id"]
+        Zadania.objects.filter(id_zadania=id).update(
+            nazwa=name, opis=desc, data_wykonywania=date
+        )
+    query = "SELECT * FROM zadania WHERE id_zadania={id}".format(id=id)
+    output = Zadania.objects.raw(query)[0]
+    return render(request, "tasks_edit.html", {"Zadanie": output})
+
+
+def people(request):
+    if request.method == "POST":
+        id = request.POST["id"]
+        Kolonizatorzy.objects.get(id_osoby=id).delete()
+
+    if request.method == "GET" and "search" in request.GET:
+        phrase = request.GET["search"].upper()
+        query = """SELECT * FROM kolonizatorzy WHERE UPPER(id_osoby) like '%%{a1}%%' or UPPER(imie) like '%%{a2}%%' or UPPER(nazwisko) like '%%{a3}%%' or UPPER(wiek) like '%%{a4}%%' or UPPER(typ) like '%%{a5}%%';"""
+        output = Kolonizatorzy.objects.raw(
+            query.format(a1=phrase, a2=phrase, a3=phrase, a4=phrase, a5=phrase)
+        )
+        return render(request, "people.html", {"Kolonizatorzy": output})
+
+    output = Kolonizatorzy.objects.raw("SELECT * FROM kolonizatorzy")
+    return render(request, "people.html", {"Kolonizatorzy": output})
+
+
+def peopleNew(request):
+    if request.method == "POST":
+        imie = request.POST["imie"]
+        nazwisko = request.POST["nazwisko"]
+        wiek = request.POST["wiek"]
+        typ = request.POST["typ"]
+        Kolonizatorzy.objects.create(imie=imie, nazwisko=nazwisko, wiek=wiek, typ=typ)
+    return render(request, "people_new.html")
+
+
+def peopleEdit(request, id):
+    if request.method == "POST":
+        imie = request.POST["imie"]
+        nazwisko = request.POST["nazwisko"]
+        wiek = request.POST["wiek"]
+        typ = request.POST["typ"]
+        id = request.POST["id"]
+        Kolonizatorzy.objects.filter(id_osoby=id).update(
+            imie=imie, nazwisko=nazwisko, wiek=wiek, typ=typ
+        )
+    query = "SELECT * FROM kolonizatorzy WHERE id_osoby={id}".format(id=id)
+    output = Kolonizatorzy.objects.raw(query)[0]
+    return render(request, "people_edit.html", {"Kolonizator": output})
+
+
+def specs(request):
+    if request.method == "POST":
+        id = request.POST["id"]
+        Specjalizacje.objects.get(nazwa=id).delete()
+
+    if request.method == "GET" and "search" in request.GET:
+        phrase = request.GET["search"].upper()
+        query = """SELECT * FROM specjalizacje WHERE UPPER(nazwa) like '%%{a1}%%' or UPPER(opis) like '%%{a2}%%';"""
+        output = Specjalizacje.objects.raw(query.format(a1=phrase, a2=phrase))
+        return render(request, "specs.html", {"Specjalizacje": output})
+
+    output = Specjalizacje.objects.raw("SELECT * FROM specjalizacje")
+    return render(request, "specs.html", {"Specjalizacje": output})
+
+
+def specsNew(request):
+    if request.method == "POST":
+        name = request.POST["nazwa"]
+        desc = request.POST["opis"]
+        Specjalizacje.objects.create(nazwa=name, opis=desc)
+    return render(request, "specs_new.html")
+
+
+def specsEdit(request, id):
+    name = ""
+    if request.method == "POST":
+        name = request.POST["nazwa"]
+        opis = request.POST["opis"]
+        Specjalizacje.objects.filter(nazwa=id).update(nazwa=name, opis=opis)
+
+    if name != "":
+        output = Specjalizacje.objects.filter(nazwa=name)[0]
+    else:
+        output = Specjalizacje.objects.filter(nazwa=id)[0]
+
+    return render(request, "specs_edit.html", {"Specjalizacja": output})
+
+
+def exp(request):
+    if request.method == "POST":
+        id = request.POST["id"]
+        name = request.POST["name"]
+        query = "DELETE FROM doswiadczenia WHERE nazwa = '{name}' and id_osoby = {id}".format(
+            name=name, id=id
+        )
+        cursor = connections["default"].cursor()
+        cursor.execute(query)
+        cursor.close()
+
+    if request.method == "GET" and "search" in request.GET:
+        phrase = request.GET["search"].upper()
+        query = """SELECT d.*, k.imie AS imie, k.nazwisko AS nazwisko FROM doswiadczenia d INNER JOIN kolonizatorzy k on d.id_osoby = k.id_osoby WHERE UPPER(k.imie) like '%%{a1}%%' OR UPPER(k.nazwisko) like '%%{a2}%%' OR UPPER(nazwa) like '%%{a3}%%' OR UPPER(liczba_lat) like '%%{a4}%%';"""
+        cursor = connections["default"].cursor()
+        cursor.execute(query.format(a1=phrase, a2=phrase, a3=phrase, a4=phrase))
+        output = cursor.fetchall()
+        cursor.close()
+        return render(request, "exp.html", {"Doswiadczenia": output})
+
+    query = """SELECT d.*, k.imie AS imie, k.nazwisko AS nazwisko FROM doswiadczenia d INNER JOIN kolonizatorzy k on d.id_osoby = k.id_osoby;"""
+    cursor = connections["default"].cursor()
+    cursor.execute(query)
+    output = cursor.fetchall()
+    cursor.close()
+    return render(request, "exp.html", {"Doswiadczenia": output})
+
+
+def expNew(request):
+    if request.method == "POST":
+        name = request.POST["nazwa"]
+        id = request.POST["id_osoby"]
+        liczba_lat = request.POST["liczba_lat"]
+        query = "INSERT INTO doswiadczenia(nazwa, id_osoby, liczba_lat) VALUES('{name}',{id},{years})".format(
+            name=name, id=id, years=liczba_lat
+        )
+        cursor = connections["default"].cursor()
+        cursor.execute(query)
+        cursor.close()
+
+    kolonizatorzy = Kolonizatorzy.objects.raw("SELECT * FROM kolonizatorzy")
+    specjalizacje = Specjalizacje.objects.raw("SELECT * FROM specjalizacje")
+    return render(
+        request,
+        "exp_new.html",
+        {"Kolonizatorzy": kolonizatorzy, "Specjalizacje": specjalizacje},
+    )
+
+
+def expEdit(request, id):
+    id_pom = int(id.split(".")[0])
+    zasob = id.split(".")[1]
+
+    if request.method == "POST":
+        new_id_pom = request.POST["id_pom"]
+        new_zasob = request.POST["zasob"]
+        liczba = request.POST["liczba"]
+        jednostka = request.POST["jednostka"]
+        query_delete = "DELETE FROM zawartosci WHERE nazwa = '{name}' and nr_pomieszczenia = {id}".format(
+            name=zasob, id=id_pom
+        )
+
+        query_insert = "INSERT INTO zawartosci(nazwa, nr_pomieszczenia, liczba, jednostka) VALUES('{name}',{id},{quantity},'{unit}')".format(
+            name=new_zasob, id=new_id_pom, quantity=liczba, unit=jednostka
+        )
+        cursor = connections["default"].cursor()
+        cursor.execute(query_delete)
+        cursor.execute(query_insert)
+        cursor.close()
+
+    pomieszczenia = Pomieszczenia.objects.raw("SELECT * FROM pomieszczenia")
+    zasoby = Zasoby.objects.raw("SELECT * FROM zasoby")
+
+    query = """SELECT * FROM zawartosci WHERE nr_pomieszczenia={a1} and nazwa='{a2}'"""
+
+    cursor = connections["default"].cursor()
+    cursor.execute(query.format(a1=id_pom, a2=zasob))
+    zawartosc = cursor.fetchone()
+    cursor.close()
+    return render(
+        request,
+        "room_res_edit.html",
+        {
+            "Pomieszczenia": pomieszczenia,
+            "Zasoby": zasoby,
+            "id_pom": id_pom,
+            "zasob": zasob,
+            "Zawartosc": zawartosc,
+        },
+    )

@@ -40,12 +40,24 @@ urlpatterns = [
     path("wydarzenia/edit/<id>", views.eventsEdit, name="events_edit"),
     # Badania + Wydarzenia
     # Zadania
+    path("zadania", views.tasks, name="tasks"),
+    path("zadania/new", views.tasksNew, name="tasks_new"),
+    path("zadania/edit/<id>", views.tasksEdit, name="tasks_edit"),
     # Zadania + Wydarzenia
     # Zadania + Pojazdy
     # Zadania + Pomieszczenia
     # Kolonizatorzy
+    path("kolonizatorzy", views.people, name="people"),
+    path("kolonizatorzy/new", views.peopleNew, name="people_new"),
+    path("kolonizatorzy/edit/<id>", views.peopleEdit, name="people_edit"),
     # Kolonizatorzy + Badania
     # Kolonizatorzy + Zadania
     # Specjalizacje
+    path("specjalizacje", views.specs, name="specs"),
+    path("specjalizacje/new", views.specsNew, name="specs_new"),
+    path("specjalizacje/edit/<id>", views.specsEdit, name="specs_edit"),
     # Doświadczenia Kolonizatorów
+    path("staż", views.exp, name="exp"),
+    path("staż/new", views.expNew, name="exp_new"),
+    path("staż/edit/<id>", views.expEdit, name="exp_edit"),
 ]

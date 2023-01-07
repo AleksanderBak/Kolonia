@@ -89,3 +89,48 @@ class Wydarzenia(models.Model):
     class Meta:
         managed = False
         db_table = "wydarzenia"
+
+
+class Zadania(models.Model):
+    id_zadania = models.BigIntegerField(primary_key=True)
+    nazwa = models.CharField(max_length=32)
+    opis = models.CharField(max_length=256)
+    data_wykonywania = models.DateField()
+
+    class Meta:
+        managed = False
+        db_table = "zadania"
+
+
+class Kolonizatorzy(models.Model):
+    id_osoby = models.IntegerField(primary_key=True)
+    imie = models.CharField(max_length=32)
+    nazwisko = models.CharField(max_length=32)
+    wiek = models.IntegerField()
+    typ = models.CharField(max_length=10)
+
+    class Meta:
+        managed = False
+        db_table = "kolonizatorzy"
+
+
+class Specjalizacje(models.Model):
+    nazwa = models.CharField(primary_key=True, max_length=32)
+    opis = models.CharField(max_length=256, blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = "specjalizacje"
+
+
+class Doswiadczenia(models.Model):
+    id_osoby = models.OneToOneField(
+        "Kolonizatorzy", models.DO_NOTHING, db_column="id_osoby", primary_key=True
+    )
+    nazwa = models.ForeignKey("Specjalizacje", models.DO_NOTHING, db_column="nazwa")
+    liczba_lat = models.IntegerField()
+
+    class Meta:
+        managed = False
+        db_table = "doswiadczenia"
+        unique_together = (("id_osoby", "nazwa"),)

@@ -1,0 +1,75 @@
+{% extends "_base.html" %}
+
+{% load compress %}
+{% load static %}
+
+{% block content %}
+    <div class="w-full h-20 flex flex-row items-center border-b-1 border-white/20 font-font-1">
+        <img class="ml-8 w-12 h-12 transition duration-75" src="{% static 'images/navbar-icon.svg' %}" alt="pic">
+        <span class="ml-3 font-font-1 text-white/40" >Kolonia marsjańska  &nbsp;&nbsp;&nbsp;/&nbsp;&nbsp;&nbsp;</span>
+        <span class="ml-3 font-font-1 text-white" >Edytowanie zadania</span>
+    </div>
+    
+    <div class="p-10 font-font-1 w-full flex pl-28">
+        <div class="w-1/2">
+            <div class="mb-6">
+              <label for="email" class="block mb-2 text-lg font-semibold text-white/40">Nazwa</label>
+              <input id="nazwa" type="text" value="{{Zadanie.nazwa}}" class="bg-white/10 border border-white/10 text-white text-sm rounded-lg focus:ring-blue-500/30 focus:border-blue-500/50 block w-full p-2.5" required>
+            </div>
+            <div class="mb-6">
+              <label for="password" class="block mb-2 text-lg font-semibold text-white/40">Opis</label>
+              <textarea id="opis" cols="30" rows="8" class="bg-white/10 border border-white/10 text-white text-sm rounded-lg focus:ring-blue-500/30 focus:border-blue-500/50 block w-full p-2.5 ">{{Zadanie.opis}}</textarea>
+            </div>
+            <div class="mb-6">
+                <label for="email" class="block mb-2 text-lg font-semibold text-white/40">Data</label>
+                <input id="data" type="date" value="{{Zadanie.data_wykonywania|date:'Y-m-d'}}" class="bg-white/10 border border-white/10 text-white text-sm rounded-lg focus:ring-blue-500/30 focus:border-blue-500/50 block w-full p-2.5" required>
+            </div>
+            <input id="id_zadania" type="hidden" value="{{Zadanie.id_zadania}}">
+            <button id="submitbutton" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center">Zapisz</button>
+        </div>
+    </div>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+    <script type="text/javascript"> window.CSRF_TOKEN = "{{ csrf_token }}"; </script>
+    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script type="text/javascript">
+    $('#submitbutton').click(function(){
+        let nazwa = document.getElementById("nazwa").value;
+        let opis = document.getElementById("opis").value;
+        let data = document.getElementById("data").value;
+        let id = document.getElementById("id_zadania").value;
+        let valid = true;
+        if (valid) {
+            $.ajax(
+            {
+            type:"POST",
+            url: "",
+            data:{
+                csrfmiddlewaretoken: window.CSRF_TOKEN,
+                nazwa: nazwa,
+                opis: opis,
+                data: data,
+                id: id,
+            },
+            success: function() {
+                Swal.fire({
+                    title: 'Sukces!',
+                    text: 'Zadanie zostało zedytowane',
+                    icon: 'success',
+                    confirmButtonColor: '#3EB489',
+                    confirmButtonText: 'Kontynuuj'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        window.location=document.referrer;
+                    }
+                });
+            },
+            error: function () {
+                Swal.fire('Błąd', 'Wysąpił błąd w trakcie próby edycji zadania', 'error')
+            }
+            });
+        } else {
+            Swal.fire('Niepoprawne dane', '', 'error')
+        }
+    });
+    </script>
+{% endblock content %}
