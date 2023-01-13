@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from django.db import connections
+from django.db import connections, transaction
 from .models import (
     Pomieszczenia,
     Zasoby,
@@ -13,6 +13,10 @@ from .models import (
     Kolonizatorzy,
     Specjalizacje,
     Doswiadczenia,
+    KolonizatorzyZadania,
+    KolonizatorzyBadania,
+    BadaniaPomieszczenia,
+    ZadaniaPomieszczenia,
 )
 
 # Create your views here.
@@ -151,9 +155,16 @@ def roomResEdit(request, id):
             name=new_zasob, id=new_id_pom, quantity=liczba, unit=jednostka
         )
         cursor = connections["default"].cursor()
-        cursor.execute(query_delete)
-        cursor.execute(query_insert)
-        cursor.close()
+        try:
+            transaction.set_autocommit(False)
+            cursor.execute(query_delete)
+            cursor.execute(query_insert)
+        except:
+            transaction.rollback()
+            raise NameError
+        finally:
+            transaction.set_autocommit(True)
+            cursor.close()
 
     pomieszczenia = Pomieszczenia.objects.raw("SELECT * FROM pomieszczenia")
     zasoby = Zasoby.objects.raw("SELECT * FROM zasoby")
@@ -603,43 +614,801 @@ def expNew(request):
 
 
 def expEdit(request, id):
-    id_pom = int(id.split(".")[0])
-    zasob = id.split(".")[1]
+    id_os = int(id.split(".")[0])
+    nazwa = id.split(".")[1]
 
     if request.method == "POST":
-        new_id_pom = request.POST["id_pom"]
-        new_zasob = request.POST["zasob"]
-        liczba = request.POST["liczba"]
-        jednostka = request.POST["jednostka"]
-        query_delete = "DELETE FROM zawartosci WHERE nazwa = '{name}' and nr_pomieszczenia = {id}".format(
-            name=zasob, id=id_pom
+        new_id_os = request.POST["id_os"]
+        new_nazwa = request.POST["nazwa"]
+        lata = request.POST["lata"]
+
+        query_delete = "DELETE FROM doswiadczenia WHERE id_osoby = {osoba} and nazwa = '{nazwa}'".format(
+            osoba=id_os, nazwa=nazwa
         )
 
-        query_insert = "INSERT INTO zawartosci(nazwa, nr_pomieszczenia, liczba, jednostka) VALUES('{name}',{id},{quantity},'{unit}')".format(
-            name=new_zasob, id=new_id_pom, quantity=liczba, unit=jednostka
+        query_insert = "INSERT INTO doswiadczenia(id_osoby, nazwa, liczba_lat) VALUES({id_os},'{nazwa}',{lata})".format(
+            id_os=new_id_os, nazwa=new_nazwa, lata=lata
         )
         cursor = connections["default"].cursor()
-        cursor.execute(query_delete)
-        cursor.execute(query_insert)
-        cursor.close()
 
-    pomieszczenia = Pomieszczenia.objects.raw("SELECT * FROM pomieszczenia")
-    zasoby = Zasoby.objects.raw("SELECT * FROM zasoby")
+        try:
+            transaction.set_autocommit(False)
+            cursor.execute(query_delete)
+            cursor.execute(query_insert)
+        except:
+            transaction.rollback()
+            raise NameError
+        finally:
+            transaction.set_autocommit(True)
+            cursor.close()
 
-    query = """SELECT * FROM zawartosci WHERE nr_pomieszczenia={a1} and nazwa='{a2}'"""
+    kolonizatorzy = Kolonizatorzy.objects.raw("SELECT * FROM kolonizatorzy")
+    specjalizacje = Specjalizacje.objects.raw("SELECT * FROM specjalizacje")
+
+    query = """SELECT * FROM doswiadczenia WHERE id_osoby={a1} and nazwa='{a2}'"""
 
     cursor = connections["default"].cursor()
-    cursor.execute(query.format(a1=id_pom, a2=zasob))
-    zawartosc = cursor.fetchone()
+    cursor.execute(query.format(a1=id_os, a2=nazwa))
+    doswiadczenie = cursor.fetchone()
     cursor.close()
     return render(
         request,
-        "room_res_edit.html",
+        "exp_edit.html",
         {
+            "Kolonizatorzy": kolonizatorzy,
+            "Specjalizacje": specjalizacje,
+            "Doswiadczenie": doswiadczenie,
+            "id_os": id_os,
+            "nazwa": nazwa,
+        },
+    )
+
+
+def peopleTasks(request):
+    if request.method == "POST":
+        id_os = request.POST["id_os"]
+        id_zad = request.POST["id_zad"]
+        query = "DELETE FROM kolonizatorzy_zadania WHERE id_osoby = '{id_os}' and id_zadania = {id_zad}".format(
+            id_os=id_os, id_zad=id_zad
+        )
+        cursor = connections["default"].cursor()
+        cursor.execute(query)
+        cursor.close()
+
+    if request.method == "GET" and "search" in request.GET:
+        phrase = request.GET["search"].upper()
+        query = """SELECT kz.*, k.imie AS imie, k.nazwisko AS nazwisko, z.nazwa AS zadanie FROM kolonizatorzy_zadania kz INNER JOIN kolonizatorzy k on kz.id_osoby = k.id_osoby INNER JOIN zadania z on kz.id_zadania = z.id_zadania WHERE UPPER(k.imie) like '%%{a1}%%' OR UPPER(k.nazwisko) like '%%{a2}%%' OR UPPER(z.nazwa) like '%%{a3}%%' OR UPPER(kz.id_osoby) like '%%{a4}%%' OR UPPER(kz.id_zadania) like '%%{a5}%%';"""
+        cursor = connections["default"].cursor()
+        cursor.execute(
+            query.format(a1=phrase, a2=phrase, a3=phrase, a4=phrase, a5=phrase)
+        )
+        output = cursor.fetchall()
+        cursor.close()
+        return render(request, "people_tasks.html", {"KolonizatorzyZadania": output})
+
+    query = """SELECT kz.*, k.imie AS imie, k.nazwisko AS nazwisko, z.nazwa AS zadanie FROM kolonizatorzy_zadania kz INNER JOIN kolonizatorzy k on kz.id_osoby = k.id_osoby INNER JOIN zadania z on kz.id_zadania = z.id_zadania;"""
+    cursor = connections["default"].cursor()
+    cursor.execute(query)
+    output = cursor.fetchall()
+    cursor.close()
+    return render(request, "people_tasks.html", {"KolonizatorzyZadania": output})
+
+
+def peopleTasksNew(request):
+    if request.method == "POST":
+        id_os = request.POST["id_osoby"]
+        id_zad = request.POST["id_zadania"]
+        query = "INSERT INTO kolonizatorzy_zadania(id_osoby, id_zadania) VALUES('{id_os}',{id_zad})".format(
+            id_os=id_os, id_zad=id_zad
+        )
+        cursor = connections["default"].cursor()
+        cursor.execute(query)
+        cursor.close()
+
+    kolonizatorzy = Kolonizatorzy.objects.raw(
+        "SELECT * FROM kolonizatorzy WHERE typ = 'Zwykły'"
+    )
+    zadania = Zadania.objects.raw("SELECT * FROM zadania")
+
+    return render(
+        request,
+        "people_tasks_new.html",
+        {"Kolonizatorzy": kolonizatorzy, "Zadania": zadania},
+    )
+
+
+def peopleTasksEdit(request, id):
+    id_os = int(id.split(".")[0])
+    id_zadania = int(id.split(".")[1])
+
+    if request.method == "POST":
+        new_id_os = request.POST["id_osoby"]
+        new_id_zad = request.POST["id_zadania"]
+
+        query_delete = "DELETE FROM kolonizatorzy_zadania WHERE id_osoby = {osoba} and id_zadania = {zadanie}".format(
+            osoba=id_os, zadanie=id_zadania
+        )
+
+        query_insert = "INSERT INTO kolonizatorzy_zadania(id_osoby, id_zadania) VALUES({id_os},{id_zad})".format(
+            id_os=new_id_os, id_zad=new_id_zad
+        )
+        cursor = connections["default"].cursor()
+
+        try:
+            transaction.set_autocommit(False)
+            cursor.execute(query_delete)
+            cursor.execute(query_insert)
+        except:
+            transaction.rollback()
+            raise NameError
+        finally:
+            transaction.set_autocommit(True)
+            cursor.close()
+
+    kolonizatorzy = Kolonizatorzy.objects.raw(
+        "SELECT * FROM kolonizatorzy WHERE typ = 'Zwykły'"
+    )
+    zadania = Zadania.objects.raw("SELECT * FROM zadania")
+
+    return render(
+        request,
+        "people_tasks_edit.html",
+        {
+            "Kolonizatorzy": kolonizatorzy,
+            "Zadania": zadania,
+            "id_kolonizatora": id_os,
+            "id_zadania": id_zadania,
+        },
+    )
+
+
+def peopleResearch(request):
+    if request.method == "POST":
+        id_os = request.POST["id_os"]
+        id_bad = request.POST["id_bad"]
+        query = "DELETE FROM kolonizatorzy_badania WHERE id_osoby = '{id_os}' and id_badania = {id_bad}".format(
+            id_os=id_os, id_bad=id_bad
+        )
+        cursor = connections["default"].cursor()
+        cursor.execute(query)
+        cursor.close()
+
+    if request.method == "GET" and "search" in request.GET:
+        phrase = request.GET["search"].upper()
+        query = """SELECT kb.*, k.imie AS imie, k.nazwisko AS nazwisko, b.nazwa AS zadanie FROM kolonizatorzy_badania kb INNER JOIN kolonizatorzy k on kb.id_osoby = k.id_osoby INNER JOIN badania b on kb.id_badania = b.id_badania WHERE UPPER(k.imie) like '%%{a1}%%' OR UPPER(k.nazwisko) like '%%{a2}%%' OR UPPER(b.nazwa) like '%%{a3}%%' OR UPPER(kb.id_osoby) like '%%{a4}%%' OR UPPER(kb.id_badania) like '%%{a5}%%';"""
+        cursor = connections["default"].cursor()
+        cursor.execute(
+            query.format(a1=phrase, a2=phrase, a3=phrase, a4=phrase, a5=phrase)
+        )
+        output = cursor.fetchall()
+        cursor.close()
+        return render(request, "people_tasks.html", {"KolonizatorzyZadania": output})
+
+    query = """SELECT kb.*, k.imie AS imie, k.nazwisko AS nazwisko, b.nazwa AS zadanie FROM kolonizatorzy_badania kb INNER JOIN kolonizatorzy k on kb.id_osoby = k.id_osoby INNER JOIN badania b on kb.id_badania = b.id_badania;"""
+    cursor = connections["default"].cursor()
+    cursor.execute(query)
+    output = cursor.fetchall()
+    cursor.close()
+    return render(request, "people_research.html", {"KolonizatorzyBadania": output})
+
+
+def peopleResearchNew(request):
+    if request.method == "POST":
+        id_os = request.POST["id_osoby"]
+        id_bad = request.POST["id_badania"]
+        query = "INSERT INTO kolonizatorzy_badania(id_osoby, id_badania) VALUES('{id_os}',{id_bad})".format(
+            id_os=id_os, id_bad=id_bad
+        )
+        cursor = connections["default"].cursor()
+        cursor.execute(query)
+        cursor.close()
+
+    kolonizatorzy = Kolonizatorzy.objects.raw(
+        "SELECT * FROM kolonizatorzy WHERE typ = 'Badawczy'"
+    )
+    badania = Badania.objects.raw("SELECT * FROM badania")
+
+    return render(
+        request,
+        "people_research_new.html",
+        {"Kolonizatorzy": kolonizatorzy, "Badania": badania},
+    )
+
+
+def peopleResearchEdit(request, id):
+    id_os = int(id.split(".")[0])
+    id_badania = int(id.split(".")[1])
+
+    if request.method == "POST":
+        new_id_os = request.POST["id_osoby"]
+        new_id_bad = request.POST["id_badania"]
+
+        query_delete = "DELETE FROM kolonizatorzy_badania WHERE id_osoby = {osoba} and id_badania = {badanie}".format(
+            osoba=id_os, badanie=id_badania
+        )
+
+        query_insert = "INSERT INTO kolonizatorzy_badania(id_osoby, id_badania) VALUES({id_os},{id_bad})".format(
+            id_os=new_id_os, id_bad=new_id_bad
+        )
+        cursor = connections["default"].cursor()
+
+        try:
+            transaction.set_autocommit(False)
+            cursor.execute(query_delete)
+            cursor.execute(query_insert)
+        except:
+            transaction.rollback()
+            raise NameError
+        finally:
+            transaction.set_autocommit(True)
+            cursor.close()
+
+    kolonizatorzy = Kolonizatorzy.objects.raw(
+        "SELECT * FROM kolonizatorzy WHERE typ = 'Badawczy'"
+    )
+    badania = Badania.objects.raw("SELECT * FROM badania")
+
+    return render(
+        request,
+        "people_research_edit.html",
+        {
+            "Kolonizatorzy": kolonizatorzy,
+            "Badania": badania,
+            "id_kolonizatora": id_os,
+            "id_badania": id_badania,
+        },
+    )
+
+
+def tasksRooms(request):
+    if request.method == "POST":
+        id_pom = request.POST["id_pom"]
+        id_zad = request.POST["id_zad"]
+        query = "DELETE FROM zadania_pomieszczenia WHERE id_zadania = '{id_zad}' and nr_pomieszczenia = {id_pom}".format(
+            id_zad=id_zad, id_pom=id_pom
+        )
+        cursor = connections["default"].cursor()
+        cursor.execute(query)
+        cursor.close()
+
+    if request.method == "GET" and "search" in request.GET:
+        phrase = request.GET["search"].upper()
+        query = """SELECT zp.*, z.nazwa AS zadanie, p.nazwa AS pomieszczenie FROM zadania_pomieszczenia zp INNER JOIN zadania z on zp.id_zadania = z.id_zadania INNER JOIN pomieszczenia p on zp.nr_pomieszczenia = p.nr_pomieszczenia WHERE UPPER(p.nazwa) like '%%{a1}%%' OR UPPER(z.nazwa) like '%%{a2}%%' OR UPPER(zp.nr_pomieszczenia) like '%%{a3}%%';"""
+        cursor = connections["default"].cursor()
+        cursor.execute(query.format(a1=phrase, a2=phrase, a3=phrase))
+        output = cursor.fetchall()
+        cursor.close()
+        return render(request, "tasks_rooms.html", {"ZadaniaPomieszczenia": output})
+
+    query = """SELECT zp.*, z.nazwa AS zadanie, p.nazwa AS pomieszczenie FROM zadania_pomieszczenia zp INNER JOIN zadania z on zp.id_zadania = z.id_zadania INNER JOIN pomieszczenia p on zp.nr_pomieszczenia = p.nr_pomieszczenia;"""
+    cursor = connections["default"].cursor()
+    cursor.execute(query)
+    output = cursor.fetchall()
+    cursor.close()
+    return render(request, "tasks_rooms.html", {"ZadaniaPomieszczenia": output})
+
+
+def tasksRoomsNew(request):
+    if request.method == "POST":
+        id_zad = request.POST["id_zad"]
+        id_pom = request.POST["id_pom"]
+        query = "INSERT INTO zadania_pomieszczenia(id_zadania, nr_pomieszczenia) VALUES({id_zad},{id_pom})".format(
+            id_zad=id_zad, id_pom=id_pom
+        )
+        cursor = connections["default"].cursor()
+        cursor.execute(query)
+        cursor.close()
+
+    zadania = Zadania.objects.raw("SELECT * FROM zadania")
+    pomieszczenia = Pomieszczenia.objects.raw("SELECT * FROM pomieszczenia")
+
+    return render(
+        request,
+        "tasks_rooms_new.html",
+        {"Zadania": zadania, "Pomieszczenia": pomieszczenia},
+    )
+
+
+def tasksRoomsEdit(request, id):
+    id_zad = int(id.split(".")[0])
+    id_pom = int(id.split(".")[1])
+
+    if request.method == "POST":
+        new_id_zad = request.POST["id_zad"]
+        new_id_pom = request.POST["id_pom"]
+
+        query_delete = "DELETE FROM zadania_pomieszczenia WHERE id_zadania = {id_zad} and nr_pomieszczenia = {id_pom}".format(
+            id_zad=id_zad, id_pom=id_pom
+        )
+
+        query_insert = "INSERT INTO zadania_pomieszczenia(id_zadania, nr_pomieszczenia) VALUES({id_zad},{id_pom})".format(
+            id_zad=new_id_zad, id_pom=new_id_pom
+        )
+        cursor = connections["default"].cursor()
+
+        try:
+            transaction.set_autocommit(False)
+            cursor.execute(query_delete)
+            cursor.execute(query_insert)
+        except:
+            transaction.rollback()
+            raise NameError
+        finally:
+            transaction.set_autocommit(True)
+            cursor.close()
+
+    zadania = Zadania.objects.raw("SELECT * FROM zadania")
+    pomieszczenia = Pomieszczenia.objects.raw("SELECT * FROM pomieszczenia")
+
+    return render(
+        request,
+        "tasks_rooms_edit.html",
+        {
+            "Zadania": zadania,
             "Pomieszczenia": pomieszczenia,
-            "Zasoby": zasoby,
-            "id_pom": id_pom,
-            "zasob": zasob,
-            "Zawartosc": zawartosc,
+            "id_zadania": id_zad,
+            "id_pomieszczenia": id_pom,
+        },
+    )
+
+
+def researchesRooms(request):
+    if request.method == "POST":
+        id_pom = request.POST["id_pom"]
+        id_bad = request.POST["id_bad"]
+        query = "DELETE FROM badania_pomieszczenia WHERE id_badania = {id_bad} and nr_pomieszczenia = {id_pom}".format(
+            id_bad=id_bad, id_pom=id_pom
+        )
+        cursor = connections["default"].cursor()
+        cursor.execute(query)
+        cursor.close()
+
+    if request.method == "GET" and "search" in request.GET:
+        phrase = request.GET["search"].upper()
+        query = """SELECT bp.*, b.nazwa AS badanie, p.nazwa AS pomieszczenie FROM badania_pomieszczenia bp INNER JOIN badania b on bp.id_badania = b.id_badania INNER JOIN pomieszczenia p on bp.nr_pomieszczenia = p.nr_pomieszczenia WHERE UPPER(p.nazwa) like '%%{a1}%%' OR UPPER(b.nazwa) like '%%{a2}%%' OR UPPER(bp.nr_pomieszczenia) like '%%{a3}%%';"""
+        cursor = connections["default"].cursor()
+        cursor.execute(query.format(a1=phrase, a2=phrase, a3=phrase))
+        output = cursor.fetchall()
+        cursor.close()
+        return render(
+            request, "researches_rooms.html", {"BadaniaPomieszczenia": output}
+        )
+
+    query = """SELECT bp.*, b.nazwa AS badanie, p.nazwa AS pomieszczenie FROM badania_pomieszczenia bp INNER JOIN badania b on bp.id_badania = b.id_badania INNER JOIN pomieszczenia p on bp.nr_pomieszczenia = p.nr_pomieszczenia;"""
+    cursor = connections["default"].cursor()
+    cursor.execute(query)
+    output = cursor.fetchall()
+    cursor.close()
+    return render(request, "researches_rooms.html", {"BadaniaPomieszczenia": output})
+
+
+def researchesRoomsNew(request):
+    if request.method == "POST":
+        id_bad = request.POST["id_bad"]
+        id_pom = request.POST["id_pom"]
+        query = "INSERT INTO badania_pomieszczenia(id_badania, nr_pomieszczenia) VALUES({id_bad},{id_pom})".format(
+            id_bad=id_bad, id_pom=id_pom
+        )
+        cursor = connections["default"].cursor()
+        cursor.execute(query)
+        cursor.close()
+
+    badania = Badania.objects.raw("SELECT * FROM badania")
+    pomieszczenia = Pomieszczenia.objects.raw("SELECT * FROM pomieszczenia")
+
+    return render(
+        request,
+        "researches_rooms_new.html",
+        {"Badania": badania, "Pomieszczenia": pomieszczenia},
+    )
+
+
+def researchesRoomsEdit(request, id):
+    id_bad = int(id.split(".")[0])
+    id_pom = int(id.split(".")[1])
+
+    if request.method == "POST":
+        new_id_bad = request.POST["id_bad"]
+        new_id_pom = request.POST["id_pom"]
+
+        query_delete = "DELETE FROM badania_pomieszczenia WHERE id_badania = {id_bad} and nr_pomieszczenia = {id_pom}".format(
+            id_bad=id_bad, id_pom=id_pom
+        )
+
+        query_insert = "INSERT INTO badania_pomieszczenia(id_badania, nr_pomieszczenia) VALUES({id_bad},{id_pom})".format(
+            id_bad=new_id_bad, id_pom=new_id_pom
+        )
+        cursor = connections["default"].cursor()
+
+        try:
+            transaction.set_autocommit(False)
+            cursor.execute(query_delete)
+            cursor.execute(query_insert)
+        except:
+            transaction.rollback()
+            raise NameError
+        finally:
+            transaction.set_autocommit(True)
+            cursor.close()
+
+    badania = Badania.objects.raw("SELECT * FROM badania")
+    pomieszczenia = Pomieszczenia.objects.raw("SELECT * FROM pomieszczenia")
+
+    return render(
+        request,
+        "researches_rooms_edit.html",
+        {
+            "Badania": badania,
+            "Pomieszczenia": pomieszczenia,
+            "id_badania": id_bad,
+            "id_pomieszczenia": id_pom,
+        },
+    )
+
+
+def tasksVehicles(request):
+    if request.method == "POST":
+        id_zad = request.POST["id_zad"]
+        id_poj = request.POST["id_poj"]
+        query = "DELETE FROM zadania_pojazdy WHERE id_zadania = {id_zad} and id_pojazdu = {id_poj}".format(
+            id_zad=id_zad, id_poj=id_poj
+        )
+        cursor = connections["default"].cursor()
+        cursor.execute(query)
+        cursor.close()
+
+    if request.method == "GET" and "search" in request.GET:
+        phrase = request.GET["search"].upper()
+        query = """SELECT zp.*, z.nazwa AS zadanie, p.nazwa AS pojazd FROM zadania_pojazdy zp INNER JOIN zadania z on zp.id_zadania = z.id_zadania INNER JOIN pojazdy p on zp.id_pojazdu = p.id_pojazdu WHERE UPPER(p.nazwa) like '%%{a1}%%' OR UPPER(z.nazwa) like '%%{a2}%%' OR UPPER(p.id_pojazdu) like '%%{a3}%%';"""
+        cursor = connections["default"].cursor()
+        cursor.execute(query.format(a1=phrase, a2=phrase, a3=phrase))
+        output = cursor.fetchall()
+        cursor.close()
+        return render(request, "tasks_vehicles.html", {"ZadaniaPojazdy": output})
+
+    query = """SELECT zp.*, z.nazwa AS zadanie, p.nazwa AS pojazd FROM zadania_pojazdy zp INNER JOIN zadania z on zp.id_zadania = z.id_zadania INNER JOIN pojazdy p on zp.id_pojazdu = p.id_pojazdu;"""
+    cursor = connections["default"].cursor()
+    cursor.execute(query)
+    output = cursor.fetchall()
+    cursor.close()
+    return render(request, "tasks_vehicles.html", {"ZadaniaPojazdy": output})
+
+
+def tasksVehiclesNew(request):
+    if request.method == "POST":
+        id_zad = request.POST["id_zad"]
+        id_poj = request.POST["id_poj"]
+        query = "INSERT INTO zadania_pojazdy(id_zadania, id_pojazdu) VALUES({id_zad},{id_poj})".format(
+            id_zad=id_zad, id_poj=id_poj
+        )
+        cursor = connections["default"].cursor()
+        cursor.execute(query)
+        cursor.close()
+
+    zadania = Zadania.objects.raw("SELECT * FROM zadania")
+    pojazdy = Pojazdy.objects.raw("SELECT * FROM pojazdy")
+
+    return render(
+        request,
+        "tasks_vehicles_new.html",
+        {"Zadania": zadania, "Pojazdy": pojazdy},
+    )
+
+
+def tasksVehiclesEdit(request, id):
+    id_zad = int(id.split(".")[0])
+    id_poj = int(id.split(".")[1])
+
+    if request.method == "POST":
+        new_id_zad = request.POST["id_zad"]
+        new_id_poj = request.POST["id_poj"]
+
+        query_delete = "DELETE FROM zadania_pojazdy WHERE id_zadania = {id_zad} and id_pojazdu = {id_poj}".format(
+            id_zad=id_zad, id_poj=id_poj
+        )
+
+        query_insert = "INSERT INTO zadania_pojazdy(id_zadania, id_pojazdu) VALUES({id_zad},{id_poj})".format(
+            id_zad=new_id_zad, id_poj=new_id_poj
+        )
+        cursor = connections["default"].cursor()
+
+        try:
+            transaction.set_autocommit(False)
+            cursor.execute(query_delete)
+            cursor.execute(query_insert)
+        except:
+            transaction.rollback()
+            raise NameError
+        finally:
+            transaction.set_autocommit(True)
+            cursor.close()
+
+    zadania = Zadania.objects.raw("SELECT * FROM zadania")
+    pojazdy = Pojazdy.objects.raw("SELECT * FROM pojazdy")
+
+    return render(
+        request,
+        "tasks_vehicles_edit.html",
+        {
+            "Zadania": zadania,
+            "Pojazdy": pojazdy,
+            "id_zadania": id_zad,
+            "id_pojazdu": id_poj,
+        },
+    )
+
+
+def researchesVehicles(request):
+    if request.method == "POST":
+        id_bad = request.POST["id_bad"]
+        id_poj = request.POST["id_poj"]
+        query = "DELETE FROM badania_pojazdy WHERE id_badania = {id_bad} and id_pojazdu = {id_poj}".format(
+            id_bad=id_bad, id_poj=id_poj
+        )
+        cursor = connections["default"].cursor()
+        cursor.execute(query)
+        cursor.close()
+
+    if request.method == "GET" and "search" in request.GET:
+        phrase = request.GET["search"].upper()
+        query = """SELECT bp.*, b.nazwa AS badanie, p.nazwa AS pojazd FROM badania_pojazdy bp INNER JOIN badania b on bp.id_badania = b.id_badania INNER JOIN pojazdy p on bp.id_pojazdu = p.id_pojazdu WHERE UPPER(p.nazwa) like '%%{a1}%%' OR UPPER(b.nazwa) like '%%{a2}%%' OR UPPER(p.id_pojazdu) like '%%{a3}%%';"""
+        cursor = connections["default"].cursor()
+        cursor.execute(query.format(a1=phrase, a2=phrase, a3=phrase))
+        output = cursor.fetchall()
+        cursor.close()
+        return render(request, "researches_vehicles.html", {"BadaniaPojazdy": output})
+
+    query = """SELECT bp.*, b.nazwa AS badanie, p.nazwa AS pojazd FROM badania_pojazdy bp INNER JOIN badania b on bp.id_badania = b.id_badania INNER JOIN pojazdy p on bp.id_pojazdu = p.id_pojazdu;"""
+    cursor = connections["default"].cursor()
+    cursor.execute(query)
+    output = cursor.fetchall()
+    cursor.close()
+    return render(request, "researches_vehicles.html", {"BadaniaPojazdy": output})
+
+
+def researchesVehiclesNew(request):
+    if request.method == "POST":
+        id_bad = request.POST["id_bad"]
+        id_poj = request.POST["id_poj"]
+        query = "INSERT INTO badania_pojazdy(id_badania, id_pojazdu) VALUES({id_bad},{id_poj})".format(
+            id_bad=id_bad, id_poj=id_poj
+        )
+        cursor = connections["default"].cursor()
+        cursor.execute(query)
+        cursor.close()
+
+    badania = Badania.objects.raw("SELECT * FROM badania")
+    pojazdy = Pojazdy.objects.raw("SELECT * FROM pojazdy")
+
+    return render(
+        request,
+        "tasks_vehicles_new.html",
+        {"Badania": badania, "Pojazdy": pojazdy},
+    )
+
+
+def researchesVehiclesEdit(request, id):
+    id_bad = int(id.split(".")[0])
+    id_poj = int(id.split(".")[1])
+
+    if request.method == "POST":
+        new_id_bad = request.POST["id_bad"]
+        new_id_poj = request.POST["id_poj"]
+
+        query_delete = "DELETE FROM badania_pojazdy WHERE id_badania = {id_bad} and id_pojazdu = {id_poj}".format(
+            id_bad=id_bad, id_poj=id_poj
+        )
+
+        query_insert = "INSERT INTO badania_pojazdy(id_badania, id_pojazdu) VALUES({id_bad},{id_poj})".format(
+            id_bad=new_id_bad, id_poj=new_id_poj
+        )
+        cursor = connections["default"].cursor()
+
+        try:
+            transaction.set_autocommit(False)
+            cursor.execute(query_delete)
+            cursor.execute(query_insert)
+        except:
+            transaction.rollback()
+            raise NameError
+        finally:
+            transaction.set_autocommit(True)
+            cursor.close()
+
+    badania = Badania.objects.raw("SELECT * FROM badania")
+    pojazdy = Pojazdy.objects.raw("SELECT * FROM pojazdy")
+
+    return render(
+        request,
+        "researches_vehicles_edit.html",
+        {
+            "Badania": badania,
+            "Pojazdy": pojazdy,
+            "id_badania": id_bad,
+            "id_pojazdu": id_poj,
+        },
+    )
+
+
+def researchesEvents(request):
+    if request.method == "POST":
+        id_bad = request.POST["id_bad"]
+        id_wyd = request.POST["id_wyd"]
+        query = "DELETE FROM badania_wydarzenia WHERE id_badania = {id_bad} and id_wydarzenia = {id_wyd}".format(
+            id_bad=id_bad, id_wyd=id_wyd
+        )
+        cursor = connections["default"].cursor()
+        cursor.execute(query)
+        cursor.close()
+
+    if request.method == "GET" and "search" in request.GET:
+        phrase = request.GET["search"].upper()
+        query = """SELECT bw.*, b.nazwa AS badanie, w.nazwa AS wydarzenie FROM badania_wydarzenia bw INNER JOIN badania b on bw.id_badania = b.id_badania INNER JOIN wydarzenia w on bw.id_wydarzenia = w.id_wydarzenia WHERE UPPER(w.nazwa) like '%%{a1}%%' OR UPPER(b.nazwa) like '%%{a2}%%';"""
+        cursor = connections["default"].cursor()
+        cursor.execute(query.format(a1=phrase, a2=phrase))
+        output = cursor.fetchall()
+        cursor.close()
+        return render(request, "researches_events.html", {"BadaniaWydarzenia": output})
+
+    query = """SELECT bw.*, b.nazwa AS badanie, w.nazwa AS wydarzenie FROM badania_wydarzenia bw INNER JOIN badania b on bw.id_badania = b.id_badania INNER JOIN wydarzenia w on bw.id_wydarzenia = w.id_wydarzenia;"""
+    cursor = connections["default"].cursor()
+    cursor.execute(query)
+    output = cursor.fetchall()
+    cursor.close()
+    return render(request, "researches_events.html", {"BadaniaWydarzenia": output})
+
+
+def researchesEventsNew(request):
+    if request.method == "POST":
+        id_bad = request.POST["id_bad"]
+        id_wyd = request.POST["id_wyd"]
+        query = "INSERT INTO badania_wydarzenia(id_badania, id_wydarzenia) VALUES({id_bad},{id_wyd})".format(
+            id_bad=id_bad, id_wyd=id_wyd
+        )
+        cursor = connections["default"].cursor()
+        cursor.execute(query)
+        cursor.close()
+
+    badania = Badania.objects.raw("SELECT * FROM badania")
+    wydarzenia = Wydarzenia.objects.raw("SELECT * FROM wydarzenia")
+
+    return render(
+        request,
+        "researches_events_new.html",
+        {"Badania": badania, "Wydarzenia": wydarzenia},
+    )
+
+
+def researchesEventsEdit(request, id):
+    id_bad = int(id.split(".")[0])
+    id_wyd = int(id.split(".")[1])
+
+    if request.method == "POST":
+        new_id_bad = request.POST["id_bad"]
+        new_id_wyd = request.POST["id_wyd"]
+
+        query_delete = "DELETE FROM badania_wydarzenia WHERE id_badania = {id_bad} and id_wydarzenia = {id_wyd}".format(
+            id_bad=id_bad, id_wyd=id_wyd
+        )
+
+        query_insert = "INSERT INTO badania_wydarzenia(id_badania, id_wydarzenia) VALUES({id_bad},{id_wyd})".format(
+            id_bad=new_id_bad, id_wyd=new_id_wyd
+        )
+        cursor = connections["default"].cursor()
+
+        try:
+            transaction.set_autocommit(False)
+            cursor.execute(query_delete)
+            cursor.execute(query_insert)
+        except:
+            transaction.rollback()
+            raise NameError
+        finally:
+            transaction.set_autocommit(True)
+            cursor.close()
+
+    badania = Badania.objects.raw("SELECT * FROM badania")
+    wydarzenia = Wydarzenia.objects.raw("SELECT * FROM wydarzenia")
+
+    return render(
+        request,
+        "researches_events_edit.html",
+        {
+            "Badania": badania,
+            "Wydarzenia": wydarzenia,
+            "id_badania": id_bad,
+            "id_wydarzenia": id_wyd,
+        },
+    )
+
+
+def tasksEvents(request):
+    if request.method == "POST":
+        id_zad = request.POST["id_zad"]
+        id_wyd = request.POST["id_wyd"]
+        query = "DELETE FROM wydarzenia_zadania WHERE id_zadania = {id_zad} and id_wydarzenia = {id_wyd}".format(
+            id_zad=id_zad, id_wyd=id_wyd
+        )
+        cursor = connections["default"].cursor()
+        cursor.execute(query)
+        cursor.close()
+
+    if request.method == "GET" and "search" in request.GET:
+        phrase = request.GET["search"].upper()
+        query = """SELECT zw.*, z.nazwa AS zadanie, w.nazwa AS wydarzenie FROM wydarzenia_zadania zw INNER JOIN zadania z on zw.id_zadania = z.id_zadania INNER JOIN wydarzenia w on zw.id_wydarzenia = w.id_wydarzenia WHERE UPPER(w.nazwa) like '%%{a1}%%' OR UPPER(z.nazwa) like '%%{a2}%%';"""
+        cursor = connections["default"].cursor()
+        cursor.execute(query.format(a1=phrase, a2=phrase))
+        output = cursor.fetchall()
+        cursor.close()
+        return render(request, "tasks_events.html", {"ZadaniaWydarzenia": output})
+
+    query = """SELECT zw.*, z.nazwa AS zadanie, w.nazwa AS wydarzenie FROM wydarzenia_zadania zw INNER JOIN zadania z on zw.id_zadania = z.id_zadania INNER JOIN wydarzenia w on zw.id_wydarzenia = w.id_wydarzenia;"""
+    cursor = connections["default"].cursor()
+    cursor.execute(query)
+    output = cursor.fetchall()
+    cursor.close()
+    return render(request, "tasks_events.html", {"ZadaniaWydarzenia": output})
+
+
+def tasksEventsNew(request):
+    if request.method == "POST":
+        id_zad = request.POST["id_zad"]
+        id_wyd = request.POST["id_wyd"]
+        query = "INSERT INTO wydarzenia_zadania(id_zadania, id_wydarzenia) VALUES({id_zad},{id_wyd})".format(
+            id_zad=id_zad, id_wyd=id_wyd
+        )
+        cursor = connections["default"].cursor()
+        cursor.execute(query)
+        cursor.close()
+
+    zadania = Zadania.objects.raw("SELECT * FROM zadania")
+    wydarzenia = Wydarzenia.objects.raw("SELECT * FROM wydarzenia")
+
+    return render(
+        request,
+        "tasks_events_new.html",
+        {"Zadania": zadania, "Wydarzenia": wydarzenia},
+    )
+
+
+def tasksEventsEdit(request, id):
+    id_zad = int(id.split(".")[0])
+    id_wyd = int(id.split(".")[1])
+
+    if request.method == "POST":
+        new_id_zad = request.POST["id_zad"]
+        new_id_wyd = request.POST["id_wyd"]
+
+        query_delete = "DELETE FROM wydarzenia_zadania WHERE id_zadania = {id_zad} and id_wydarzenia = {id_wyd}".format(
+            id_zad=id_zad, id_wyd=id_wyd
+        )
+
+        query_insert = "INSERT INTO wydarzenia_zadania(id_zadania, id_wydarzenia) VALUES({id_zad},{id_wyd})".format(
+            id_zad=new_id_zad, id_wyd=new_id_wyd
+        )
+        cursor = connections["default"].cursor()
+
+        try:
+            transaction.set_autocommit(False)
+            cursor.execute(query_delete)
+            cursor.execute(query_insert)
+        except:
+            transaction.rollback()
+            raise NameError
+        finally:
+            transaction.set_autocommit(True)
+            cursor.close()
+
+    zadania = Zadania.objects.raw("SELECT * FROM zadania")
+    wydarzenia = Wydarzenia.objects.raw("SELECT * FROM wydarzenia")
+
+    return render(
+        request,
+        "tasks_events_edit.html",
+        {
+            "Zadania": zadania,
+            "Wydarzenia": wydarzenia,
+            "id_zadania": id_zad,
+            "id_wydarzenia": id_wyd,
         },
     )

@@ -44,15 +44,15 @@
                         <li>
                             <a href="{% url 'research' %}" class="flex items-center p-2 pl-11 w-full text-base font-normal rounded-lg transition duration-75 group font-font-1 text-white hover:bg-gray-700">Badania</a>
                         </li>
-                        <!-- <li>
-                           <a href="#" class="flex items-center p-2 pl-11 w-full text-base font-normal rounded-lg transition duration-75 group font-font-1 text-white hover:bg-gray-700">Pojazdy</a>
+                        <li>
+                           <a href="{% url 'people_research' %}" class="flex items-center p-2 pl-11 w-full text-base font-normal rounded-lg transition duration-75 group font-font-1 text-white hover:bg-gray-700">Badania + Kolonizatorzy</a>
                         </li>
                         <li>
-                           <a href="#" class="flex items-center p-2 pl-11 w-full text-base font-normal rounded-lg transition duration-75 group font-font-1 text-white hover:bg-gray-700">Pomieszczenia</a>
+                           <a href="{% url 'researches_rooms' %}" class="flex items-center p-2 pl-11 w-full text-base font-normal rounded-lg transition duration-75 group font-font-1 text-white hover:bg-gray-700">Badania + Pomieszczenia</a>
                         </li>
                         <li>
-                           <a href="#" class="flex items-center p-2 pl-11 w-full text-base font-normal rounded-lg transition duration-75 group font-font-1 text-white hover:bg-gray-700">Wydarzenia</a>
-                        </li> -->
+                           <a href="{% url 'researches_vehicles' %}" class="flex items-center p-2 pl-11 w-full text-base font-normal rounded-lg transition duration-75 group font-font-1 text-white hover:bg-gray-700">Badania + Pojazdy</a>
+                        </li> 
                   </ul>
                </li> 
 
@@ -88,13 +88,13 @@
                           <li>
                               <a href="{% url 'events' %}" class="flex items-center p-2 pl-11 w-full text-base font-normal rounded-lg transition duration-75 group font-font-1 text-white hover:bg-gray-700">Wydarzenia</a>
                           </li>
-                          <!-- <li>
-                             <a href="#" class="flex items-center p-2 pl-11 w-full text-base font-normal rounded-lg transition duration-75 group font-font-1 text-white hover:bg-gray-700">Pojazdy</a>
+                           <li>
+                             <a href="{% url 'researches_events' %}" class="flex items-center p-2 pl-11 w-full text-base font-normal rounded-lg transition duration-75 group font-font-1 text-white hover:bg-gray-700">Wydarzenia + Badania</a>
                           </li>
                           <li>
-                             <a href="#" class="flex items-center p-2 pl-11 w-full text-base font-normal rounded-lg transition duration-75 group font-font-1 text-white hover:bg-gray-700">Pomieszczenia</a>
+                             <a href="{% url 'tasks_events' %}" class="flex items-center p-2 pl-11 w-full text-base font-normal rounded-lg transition duration-75 group font-font-1 text-white hover:bg-gray-700">Wydarzenie + Zadania</a>
                           </li>
-                          <li>
+                          <!--<li>
                              <a href="#" class="flex items-center p-2 pl-11 w-full text-base font-normal rounded-lg transition duration-75 group font-font-1 text-white hover:bg-gray-700">Wydarzenia</a>
                           </li> -->
                     </ul>
@@ -156,15 +156,15 @@
                           <li>
                             <a href="{% url 'tasks' %}" class="flex items-center p-2 pl-11 w-full text-base font-normal rounded-lg transition duration-75 group font-font-1 text-white hover:bg-gray-700">Zadania</a>
                           </li>
-                          <!-- <li>
-                             <a href="#" class="flex items-center p-2 pl-11 w-full text-base font-normal rounded-lg transition duration-75 group font-font-1 text-white hover:bg-gray-700">Wydarzenia</a>
-                          </li>
                           <li>
-                            <a href="#" class="flex items-center p-2 pl-11 w-full text-base font-normal rounded-lg transition duration-75 group font-font-1 text-white hover:bg-gray-700">Pojazdy</a>
+                             <a href="{% url 'people_tasks' %}" class="flex items-center p-2 pl-11 w-full text-base font-normal rounded-lg transition duration-75 group font-font-1 text-white hover:bg-gray-700">Zadania + Kolonizatorzy</a>
+                          </li>
+                           <li>
+                            <a href="{% url 'tasks_rooms' %}" class="flex items-center p-2 pl-11 w-full text-base font-normal rounded-lg transition duration-75 group font-font-1 text-white hover:bg-gray-700">Zadania + Pomieszczenia</a>
                          </li>
-                         <li>
-                            <a href="#" class="flex items-center p-2 pl-11 w-full text-base font-normal rounded-lg transition duration-75 group font-font-1 text-white hover:bg-gray-700">Pomieszczenia</a>
-                         </li> -->
+                        <li>
+                            <a href="{% url 'tasks_vehicles' %}" class="flex items-center p-2 pl-11 w-full text-base font-normal rounded-lg transition duration-75 group font-font-1 text-white hover:bg-gray-700">Zadanie + Pojazdy</a>
+                         </li> 
                     </ul>
                 </li>
 

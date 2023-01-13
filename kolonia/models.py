@@ -134,3 +134,105 @@ class Doswiadczenia(models.Model):
         managed = False
         db_table = "doswiadczenia"
         unique_together = (("id_osoby", "nazwa"),)
+
+
+class KolonizatorzyBadania(models.Model):
+    id_osoby = models.OneToOneField(
+        Kolonizatorzy, models.DO_NOTHING, db_column="id_osoby", primary_key=True
+    )
+    id_badania = models.ForeignKey(Badania, models.DO_NOTHING, db_column="id_badania")
+
+    class Meta:
+        managed = False
+        db_table = "kolonizatorzy_badania"
+        unique_together = (("id_osoby", "id_badania"),)
+
+
+class KolonizatorzyZadania(models.Model):
+    id_osoby = models.OneToOneField(
+        Kolonizatorzy, models.DO_NOTHING, db_column="id_osoby", primary_key=True
+    )
+    id_zadania = models.ForeignKey("Zadania", models.DO_NOTHING, db_column="id_zadania")
+
+    class Meta:
+        managed = False
+        db_table = "kolonizatorzy_zadania"
+        unique_together = (("id_osoby", "id_zadania"),)
+
+
+class ZadaniaPomieszczenia(models.Model):
+    id_zadania = models.OneToOneField(
+        Zadania, models.DO_NOTHING, db_column="id_zadania", primary_key=True
+    )
+    nr_pomieszczenia = models.ForeignKey(
+        Pomieszczenia, models.DO_NOTHING, db_column="nr_pomieszczenia"
+    )
+
+    class Meta:
+        managed = False
+        db_table = "zadania_pomieszczenia"
+        unique_together = (("id_zadania", "nr_pomieszczenia"),)
+
+
+class BadaniaPomieszczenia(models.Model):
+    id_badania = models.OneToOneField(
+        Badania, models.DO_NOTHING, db_column="id_badania", primary_key=True
+    )
+    nr_pomieszczenia = models.ForeignKey(
+        "Pomieszczenia", models.DO_NOTHING, db_column="nr_pomieszczenia"
+    )
+
+    class Meta:
+        managed = False
+        db_table = "badania_pomieszczenia"
+        unique_together = (("id_badania", "nr_pomieszczenia"),)
+
+
+class ZadaniaPojazdy(models.Model):
+    id_zadania = models.OneToOneField(
+        Zadania, models.DO_NOTHING, db_column="id_zadania", primary_key=True
+    )
+    id_pojazdu = models.ForeignKey(Pojazdy, models.DO_NOTHING, db_column="id_pojazdu")
+
+    class Meta:
+        managed = False
+        db_table = "zadania_pojazdy"
+        unique_together = (("id_zadania", "id_pojazdu"),)
+
+
+class BadaniaPojazdy(models.Model):
+    id_badania = models.OneToOneField(
+        Badania, models.DO_NOTHING, db_column="id_badania", primary_key=True
+    )
+    id_pojazdu = models.ForeignKey("Pojazdy", models.DO_NOTHING, db_column="id_pojazdu")
+
+    class Meta:
+        managed = False
+        db_table = "badania_pojazdy"
+        unique_together = (("id_badania", "id_pojazdu"),)
+
+
+class BadaniaWydarzenia(models.Model):
+    id_badania = models.OneToOneField(
+        Badania, models.DO_NOTHING, db_column="id_badania", primary_key=True
+    )
+    id_wydarzenia = models.ForeignKey(
+        "Wydarzenia", models.DO_NOTHING, db_column="id_wydarzenia"
+    )
+
+    class Meta:
+        managed = False
+        db_table = "badania_wydarzenia"
+        unique_together = (("id_badania", "id_wydarzenia"),)
+
+
+class WydarzeniaZadania(models.Model):
+    id_wydarzenia = models.OneToOneField(
+        Wydarzenia, models.DO_NOTHING, db_column="id_wydarzenia", primary_key=True
+    )
+    id_zadania = models.ForeignKey("Zadania", models.DO_NOTHING, db_column="id_zadania")
+
+    class Meta:
+        managed = False
+        db_table = "wydarzenia_zadania"
+        unique_together = (("id_wydarzenia", "id_zadania"),)

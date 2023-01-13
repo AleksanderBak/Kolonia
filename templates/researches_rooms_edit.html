@@ -1,0 +1,70 @@
+{% extends "_base.html" %}
+
+{% load compress %}
+{% load static %}
+
+{% block content %}
+    <div class="w-full h-20 flex flex-row items-center border-b-1 border-white/20 font-font-1">
+        <img class="ml-8 w-12 h-12 transition duration-75" src="{% static 'images/navbar-icon.svg' %}" alt="pic">
+        <span class="ml-3 font-font-1 text-white/40" >Kolonia marsjańska  &nbsp;&nbsp;&nbsp;/&nbsp;&nbsp;&nbsp;</span>
+        <span class="ml-3 font-font-1 text-white" >Edytowanie przypisania badania do pomieszczenia</span>
+    </div>
+    <div class="p-10 font-font-1 w-full flex pl-28">
+        <div class="w-1/2">
+            <div class="mb-6">
+              <label for="email" class="block mb-2 text-lg font-semibold text-white/40">Zadanie</label>
+              <select id="id_bad" type="text" class="bg-white/10 border border-white/10 text-white text-sm rounded-lg focus:ring-blue-500/30 focus:border-blue-500/50 block w-full p-2.5" required>
+                {% for b in Badania %}
+                <option class="bg-main-dark text-white" value="{{b.id_badania}}" {% if b.id_badania == id_badania %}selected{% endif %}>{{b.nazwa}}</option>
+                {% endfor %}
+              </select>
+            </div>
+            <div class="mb-6">
+                <label for="email" class="block mb-2 text-lg font-semibold text-white/40">Pomieszczenie</label>
+                <select id="id_pom" type="text" class="bg-white/10 border border-white/10 text-white text-sm rounded-lg focus:ring-blue-500/30 focus:border-blue-500/50 block w-full p-2.5" required>
+                    {% for p in Pomieszczenia %}
+                    <option class="bg-main-dark text-white" value="{{p.nr_pomieszczenia}}" {% if p.nr_pomieszczenia == id_pomieszczenia %}selected{% endif %}>{{p.nr_pomieszczenia}} - {{p.nazwa}}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <button id="submitbutton" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center">Edytuj</button>
+        </div>
+    </div>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+    <script type="text/javascript"> window.CSRF_TOKEN = "{{ csrf_token }}"; </script>
+    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script type="text/javascript">
+    $('#submitbutton').click(function(){
+        let id_bad = document.getElementById("id_bad").value;
+        let id_pom = document.getElementById("id_pom").value;
+
+        let valid = true;
+        $.ajax(
+        {
+        type:"POST",
+        url: "",
+        data:{
+            csrfmiddlewaretoken: window.CSRF_TOKEN,
+            id_bad: id_bad,
+            id_pom: id_pom,
+        },
+        success: function() {
+            Swal.fire({
+                title: 'Sukces!',
+                text: 'Zedytowano przypisanie',
+                icon: 'success',
+                confirmButtonColor: '#3EB489',
+                confirmButtonText: 'Kontynuuj'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location=document.referrer;
+                }                
+            });
+        },
+        error: function () {
+            Swal.fire('To badanie jest już przypisane do tego pomieszczenia', '', 'error')
+        }
+        })
+    });
+    </script>
+{% endblock content %}

@@ -7,14 +7,13 @@
     <div class="w-full h-20 flex flex-row items-center border-b-1 border-white/20 font-font-1">
         <img class="ml-8 w-12 h-12 transition duration-75" src="{% static 'images/navbar-icon.svg' %}" alt="pic">
         <span class="ml-3 font-font-1 text-white/40" >Kolonia marsjańska  &nbsp;&nbsp;&nbsp;/&nbsp;&nbsp;&nbsp;</span>
-        <span class="ml-3 font-font-1 text-white" >Zawartosci</span>
+        <span class="ml-3 font-font-1 text-white" >Zadania + Kolonizatorzy</span>
     </div>
     <div class="p-10 font-font-1"> 
         <form method="get">
         <div class="bg-white/5 mb-4 px-2 py-3 flex flex-row rounded-md justify-between">
                 <div class="flex flex-row items-center">
                     <a href="{{ request.path }}/new"><img class="mx-4 w-6 h-6 transition duration-75" src="{% static 'images/add.svg' %}" alt="pic"></a>
-                    <a href="#"><img class="mx-4 w-6 h-6 transition duration-75" src="{% static 'images/sort.svg' %}" alt="pic"></a>
                 </div>
                 <div class="w-1/4">
                     <label for="default-search" class="mb-2 text-sm font-medium text-gray-900 sr-only">Search</label>
@@ -40,16 +39,16 @@
                 <thead class="text-xs text-white/40 uppercase bg-main-dark border-b border-white/20">
                     <tr>
                         <th scope="col" class="px-6 py-3">
-                            Pomieszczenie
+                            ID kolonizatora
                         </th>
                         <th scope="col" class="px-6 py-3">
-                            Zasób
+                            Imie
                         </th>
                         <th scope="col" class="px-6 py-3">
-                            Liczba
+                            Nazwisko
                         </th>
                         <th scope="col" class="px-6 py-3">
-                            Jednostka
+                            Zadanie
                         </th>
                         <th scope="col" class="px-6 py-3">
                             Akcje
@@ -57,25 +56,25 @@
                     </tr>
                 </thead>
                 <tbody>
-                    {% for z in Zawartosci %}
+                    {% for kz in KolonizatorzyZadania %}
                     <tr class="bg-main-dark border-b border-white/20 text-white">
-                        <th scope="row" class="px-6 py-4 font-medium whitespace-nowrap">
-                            {{z.nr_pomieszczenia.nr_pomieszczenia}} - {{z.nazwa_pom}}
-                        </th>
-                        <th scope="row" class="px-6 py-4 font-medium whitespace-nowrap">
-                            {{z.nazwa.nazwa}}
-                        </th>
-                        <th scope="row" class="px-6 py-4 font-medium whitespace-nowrap">
-                            {{z.liczba}}
-                        </th>
-                        <th scope="row" class="px-6 py-4 font-medium whitespace-nowrap">
-                            {{z.jednostka}}
-                        </th>
-                        <td class="px-6 py-4">
-                            <a href="{{request.path}}/edit/{{z.nr_pomieszczenia.nr_pomieszczenia}}.{{z.nazwa.nazwa}}">
+                        <td scope="row" class="px-6 py-4 font-medium">
+                            {{kz.0}}
+                        </td>
+                        <td scope="row" class="px-6 py-4 font-medium">
+                            {{kz.2}}
+                        </td>
+                        <td scope="row" class="px-6 py-4 font-medium">
+                            {{kz.3}}
+                        </td>
+                        <td scope="row" class="px-6 py-4 font-medium">
+                            {{kz.4}}
+                        </td>
+                        <td class="px-6 py-4 font-medium">
+                            <a href="{{request.path}}/edit/{{kz.0}}.{{kz.1}}">
                                 <button type="button" class="text-yellow-400 hover:text-white border border-yellow-400 hover:bg-yellow-500 focus:ring-4 focus:outline-none focus:ring-yellow-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 mb-2 dark:border-yellow-300 dark:text-yellow-300 dark:hover:text-white dark:hover:bg-yellow-400 dark:focus:ring-yellow-900">Edytuj</button>
                             </a>
-                            <button type="button" value="{{z.nazwa.nazwa}}.{{z.nr_pomieszczenia.nr_pomieszczenia}}" class="deletebutton text-red-700 hover:text-white border border-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 mb-2 dark:border-red-500 dark:text-red-500 dark:hover:text-white dark:hover:bg-red-600 dark:focus:ring-red-900">Usuń</button>
+                            <button type="button" value="{{kz.0}}.{{kz.1}}" class="deletebutton text-red-700 hover:text-white border border-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 mb-2 dark:border-red-500 dark:text-red-500 dark:hover:text-white dark:hover:bg-red-600 dark:focus:ring-red-900">Usuń</button>
                         </td>
                     </tr>
                     {% endfor %}
@@ -88,13 +87,13 @@
     <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script type="text/javascript">
     $('.deletebutton').click(function(){
-        let id = this.value;
-        var name = id.split(".")[0];
-        var nr_pomieszczenia = id.split(".")[1];
+        let key = this.value;
+        let id_os = key.split(".")[0];
+        let id_zad = key.split(".")[1];
         Swal.fire({
             title: 'Jesteś pewny?',
             color: 'black',
-            text: 'Czy na pewno chcesz usunąć ten zasób?',
+            text: 'Czy na pewno chcesz usunąć to powiązanie?',
             icon: 'question',
             showDenyButton: true,
             confirmButtonText: 'Usuń',
@@ -108,14 +107,14 @@
                 url: "",
                 data:{
                     csrfmiddlewaretoken: window.CSRF_TOKEN,
-                    id: nr_pomieszczenia,
-                    name: name,
+                    id_os: id_os,
+                    id_zad: id_zad,
                 },
                 success: function() {
                     location.reload();
                 },
                 error: function() {
-                    Swal.fire('Nie można usunąć danej zawartości', '', 'error')
+                    Swal.fire('Wystąpił błąd podczas usuwania powiązania', '', 'error');
                 }
             })
             } else if (result.isDenied) {
