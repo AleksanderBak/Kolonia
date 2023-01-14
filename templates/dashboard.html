@@ -4,10 +4,189 @@
 {% load static %}
 
 {% block content %}
-    <div class="w-full h-20 flex flex-row items-center border-b-1 border-white/20 font-font-1">
-        <img class="ml-8 w-12 h-12 transition duration-75" src="{% static 'images/navbar-icon.svg' %}" alt="pic">
-        <span class="ml-3 font-font-1 text-white/40" >Kolonia marsjańska  &nbsp;&nbsp;&nbsp;/&nbsp;&nbsp;&nbsp;</span>
-        <span class="ml-3 font-font-1 text-white" >Dashboard</span>
+    <div class="flex flex-col h-full">
+        <div class="w-full h-20 flex flex-row items-center border-b-1 border-white/20 font-font-1">
+            <img class="ml-8 w-12 h-12 transition duration-75" src="{% static 'images/navbar-icon.svg' %}" alt="pic">
+            <span class="ml-3 font-font-1 text-white/40" >Kolonia marsjańska  &nbsp;&nbsp;&nbsp;/&nbsp;&nbsp;&nbsp;</span>
+            <span class="ml-3 font-font-1 text-white" >Dashboard</span>
+        </div>
+        <div class="p-12 h-full">
+            <div class="flex flex-row justify-between">
+                <div class="w-1/5 h-32 bg-dashboard-1 flex flex-col rounded-2xl">
+                    <div>
+                        <p class="text-xl font-semibold mx-4 mt-4">Liczba nadchodzących <br> niebezpieczeństw</p>
+                    </div>
+                    <div>
+                        <p class="text-3xl ml-5 mt-2 font-semibold">{{Niebezp}}</p>
+                    </div>
+                </div>
+                <div class="w-1/5 h-32 bg-dashboard-2 flex flex-col rounded-2xl">
+                    <div>
+                        <p class="text-xl font-semibold mx-4 mt-4">Liczba dostępnych <br> pojazdów</p>
+                    </div>
+                    <div>
+                        <p class="text-3xl ml-5 mt-2 font-semibold">{{PojazdyCount}}</p>
+                    </div>
+                </div>
+                <div class="w-1/5 h-32 bg-dashboard-1 flex flex-col rounded-2xl">
+                    <div>
+                        <p class="text-xl font-semibold mx-4 mt-4">Liczba prowadzonych <br> badań</p>
+                    </div>
+                    <div>
+                        <p class="text-3xl ml-5 mt-2 font-semibold">{{BadaniaCount}}</p>
+                    </div>
+                </div>
+                <div class="w-1/5 h-32 bg-dashboard-2 flex flex-col rounded-2xl">
+                    <div>
+                        <p class="text-xl font-semibold mx-4 mt-4">Liczba wykonywanych <br> zadań</p>
+                    </div>
+                    <div>
+                        <p class="text-3xl ml-5 mt-2 font-semibold">{{ZadaniaCount}}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="flex flex-row justify-between px-10 pt-12">
+                <div class="flex flex-col w-1/4 items-center justify-between">
+                    <div class="bg-white/5 w-full h-60 rounded-xl p-4">
+                        <h1 class="text-white font-semibold text-2xl">Informacje ogólne:</h1>
+                        <p class="text-white mt-4 text-lg">Liczba kolonizatorów: <span>{{KolonizatorzyCount}}</span></p>
+                        <p class="text-white mt-4 text-lg">Liczba kolonizatorów badawczych: <span>{{Badawczy.0}}</span></p>
+                        <p class="text-white mt-4 text-lg">Liczba pomieszczeń: <span>{{PomieszczeniaCount}}</span></p>
+                    </div>
+                    <div class="bg-white/5 w-full mt-12 h-80 rounded-xl">
+                        <h1 class="text-white m-4 font-semibold text-2xl">Dodaj nowy zasób:</h1>
+                        <div class="mx-4 my-2 flex justify-between items-center">
+                            <label class="inline-block mb-2 text-lg font-semibold text-white/40">Pomieszczenie: </label>
+                            <select id="pomieszczenie" type="text" class="right-0 inline-block bg-white/10 border border-white/10 text-white text-sm rounded-lg focus:ring-blue-500/30 focus:border-blue-500/50 w-1/2 p-2.5" required>
+                              {% for p in Pomieszczenia %}
+                                  <option class="bg-main-dark text-white" value="{{p.nr_pomieszczenia}}" {% if p.nr_pomieszczenia == id_pom %}selected{% endif %}>{{p.nr_pomieszczenia}} - {{p.nazwa}}</option>
+                              {% endfor %}
+                            </select>
+                        </div> 
+                        <div class="mx-4 my-2 flex justify-between items-center">
+                            <label for="password" class="inline-block mb-2 text-lg font-semibold text-white/40">Zasób: </label>
+                            <input id="zasob" type="text" class="right-0 bg-white/10 border border-white/10 text-white text-sm rounded-lg focus:ring-blue-500/30 focus:border-blue-500/50 inline-block w-1/2 p-2.5" required>
+                        </div>
+                        <div class="mx-4 my-2 flex justify-between items-center">
+                            <label for="password" class="inline-block mb-2 text-lg font-semibold text-white/40">Liczba: </label>
+                            <input id="liczba" type="number" class="right-0 bg-white/10 border border-white/10 text-white text-sm rounded-lg focus:ring-blue-500/30 focus:border-blue-500/50 inline-block w-1/2 p-2.5" required>
+                        </div>
+                        <div class="mx-4 my-2 flex justify-between items-center">
+                            <label for="password" class="inline-block mb-2 text-lg font-semibold text-white/40">Jednostka: </label>
+                            <input id="jednostka" type="text" class="right-0 bg-white/10 border border-white/10 text-white text-sm rounded-lg focus:ring-blue-500/30 focus:border-blue-500/50 inline-block w-1/2 p-2.5" required>
+                        </div>
+                        <div class="flex justify-center w-full">
+                            <div class="flex flex-row justify-between w-1/2 mx-4 mt-1">
+                                <button id="submitbutton" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-1 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center">Dodaj</button>
+                                <button onclick="location.reload()" class="text-white bg-red-700 hover:bg-red-800 focus:ring-1 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center">Anuluj</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex flex-col w-3/4 items-center justify-between">
+                    <div class="bg-white/5 w-4/5 h-[35em] rounded-xl p-4">
+                        <h1 class="text-white font-semibold text-2xl mb-4">Wydarzenia:</h1>
+                        <div class="overflow-y-auto h-[30em] rounded-xl">
+                            <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400 rounded-xl">
+                                <colgroup>
+                                    <col span="1" style="width: 20%;">
+                                    <col span="1" style="width: 20%;">
+                                    <col span="1" style="width: 20%;">
+                                    <col span="1" style="width: 20%;">
+                                    <col span="1" style="width: 20%;">
+                                </colgroup>
+                                <thead class="text-xs text-white/40 uppercase bg-main-dark border-b border-white/20 sticky top-0">
+                                    <tr>
+                                        <th scope="col" class="px-6 py-3">
+                                            Nazwa
+                                        </th>
+                                        <th scope="col" class="px-6 py-3">
+                                            Poziom Zagrożenia
+                                        </th>
+                                        <th scope="col" class="px-6 py-3">
+                                            Potencjał Badawczy
+                                        </th>
+                                        <th scope="col" class="px-6 py-3">
+                                            Rodzaj
+                                        </th>
+                                        <th scope="col" class="px-6 py-3">
+                                            Typ
+                                        </th>
+                                    </tr>
+                                </thead>
+                                    <tbody>
+                                        {% for w in Wydarzenia %}
+                                        <tr class="bg-main-dark border-b border-white/20 text-white">
+                                            <td scope="row" class="px-6 py-4 font-medium">
+                                                {{w.1}}
+                                            </td>
+                                            <td scope="row" class="px-6 py-4 font-medium">
+                                                {{w.4}}
+                                            </td>
+                                            <td scope="row" class="px-6 py-4 font-medium">
+                                                {{w.3}}
+                                            </td>
+                                            <td scope="row" class="px-6 py-4 font-medium">
+                                                {{w.5}}
+                                            </td>
+                                            <td scope="row" class="px-6 py-4 font-medium">
+                                                {{w.6}}
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-    <h1>This is dummy dashboard page</h1>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+    <script type="text/javascript"> window.CSRF_TOKEN = "{{ csrf_token }}"; </script>
+    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script type="text/javascript">
+    $('#submitbutton').click(function(){
+        let zasob = capitalize(document.getElementById("zasob").value);
+        let pomieszczenie = document.getElementById("pomieszczenie").value;
+        let jednostka = capitalize(document.getElementById("jednostka").value);
+        let liczba = document.getElementById("liczba").value;
+        let empty = false;
+        if (zasob == "" || pomieszczenie == "" || jednostka == "" || liczba == "") {
+            Swal.fire('Uzupełnij wszystkie pola formularza', '', 'info')
+            empty = true;
+        }
+        if (!empty) {
+            let valid = true;
+            $.ajax(
+            {
+            type:"POST",
+            url: "",
+            data:{
+                csrfmiddlewaretoken: window.CSRF_TOKEN,
+                zasob: zasob,
+                pomieszczenie: pomieszczenie,
+                jednostka: jednostka,
+                liczba: liczba,
+            },
+            success: function() {
+                Swal.fire({
+                    title: 'Sukces!',
+                    text: 'Dodano nowy zasób',
+                    icon: 'success',
+                    confirmButtonColor: '#3EB489',
+                    confirmButtonText: 'Kontynuuj'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        location.reload();
+                    }
+                });
+            },
+            error: function () {
+                Swal.fire('Wystąpił błąd w trakcie dodawania zasobu', '', 'error')
+            }
+            })
+        }
+    });
+    </script>
 {% endblock content %}

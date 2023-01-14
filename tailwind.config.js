@@ -8,6 +8,8 @@ module.exports = {
     extend: {
       colors: {
         'main-dark': '#1C1C1C',
+        'dashboard-1': '#E3F5FF',
+        'dashboard-2': '#E5ECF6',
       },
       borderWidth: {
         '1': '1px',

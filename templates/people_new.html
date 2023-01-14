@@ -30,7 +30,10 @@
                     <option value="Zwykły" class="bg-main-dark text-white">Zwykły</option>
                 </select>
             </div>
-            <button id="submitbutton" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center">Dodaj</button>
+            <div class="flex flex-row justify-between w-1/4">
+                <button id="submitbutton" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-1 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center">Dodaj</button>
+                <button onclick="window.location=document.referrer" class="text-white bg-red-700 hover:bg-red-800 focus:ring-1 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center">Anuluj</button>
+            </div>
         </div>
     </div>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>

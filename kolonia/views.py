@@ -21,8 +21,46 @@ from .models import (
 
 # Create your views here.
 def dashboard(request):
-    # output = Pomieszczenia.objects.raw("SELECT * FROM pomieszczenia")
-    return render(request, "dashboard.html")
+    if request.method == "POST":
+        pomieszczenie = request.POST["pomieszczenie"]
+        liczba = request.POST["liczba"]
+        jednostka = request.POST["jednostka"]
+        zasob = request.POST["zasob"]
+        cursor = connections["default"].cursor()
+        cursor.callproc("DODAJZASOB", [zasob, liczba, pomieszczenie, jednostka])
+        cursor.close()
+
+    pojazdy = Pojazdy.objects.count()
+    badania = Badania.objects.count()
+    zadania = Zadania.objects.count()
+    kolonizatorzy = Kolonizatorzy.objects.count()
+    pomieszczenia = Pomieszczenia.objects.count()
+    pomieszczeniaAll = Pomieszczenia.objects.raw("SELECT * FROM pomieszczenia")
+    cursor = connections["default"].cursor()
+    niebezp = cursor.callfunc("PoliczNiebezpieczne", int, [5])
+    cursor.execute("SELECT count(id_osoby) FROM kolonizatorzy WHERE typ = 'Badawczy';")
+    kolonizatorzy_badawczy = cursor.fetchone()
+    cursor.execute(
+        "SELECT * FROM wydarzenia ORDER BY poziom_zagrozenia desc, potencjal_badawczy desc;"
+    )
+    najwazniejsze_wydarzenia = cursor.fetchall()
+    cursor.close()
+    cursor = connections["default"].cursor()
+    return render(
+        request,
+        "dashboard.html",
+        {
+            "PojazdyCount": pojazdy,
+            "BadaniaCount": badania,
+            "ZadaniaCount": zadania,
+            "Niebezp": niebezp,
+            "KolonizatorzyCount": kolonizatorzy,
+            "PomieszczeniaCount": pomieszczenia,
+            "Pomieszczenia": pomieszczeniaAll,
+            "Badawczy": kolonizatorzy_badawczy,
+            "Wydarzenia": najwazniejsze_wydarzenia,
+        },
+    )
 
 
 def rooms(request):
