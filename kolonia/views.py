@@ -70,13 +70,15 @@ def rooms(request):
 
     if request.method == "GET" and "search" in request.GET:
         phrase = request.GET["search"].upper()
-        query = """SELECT * FROM pomieszczenia WHERE UPPER(nr_pomieszczenia) like '%%{a1}%%' or UPPER(nazwa) like '%%{a2}%%' or UPPER(opis) like '%%{a3}%%';"""
+        query = """SELECT * FROM pomieszczenia WHERE UPPER(nr_pomieszczenia) like '%%{a1}%%' or UPPER(nazwa) like '%%{a2}%%' or UPPER(opis) like '%%{a3}%%' ORDER BY nr_pomieszczenia;"""
         output = Pomieszczenia.objects.raw(
             query.format(a1=phrase, a2=phrase, a3=phrase)
         )
         return render(request, "rooms.html", {"Pomieszczenia": output})
 
-    output = Pomieszczenia.objects.raw("SELECT * FROM pomieszczenia")
+    output = Pomieszczenia.objects.raw(
+        "SELECT * FROM pomieszczenia ORDER BY nr_pomieszczenia"
+    )
     return render(request, "rooms.html", {"Pomieszczenia": output})
 
 
@@ -233,11 +235,11 @@ def systems(request):
 
     if request.method == "GET" and "search" in request.GET:
         phrase = request.GET["search"].upper()
-        query = """SELECT * FROM systemy WHERE id_systemu like '%%{a1}%%' or UPPER(nazwa) like '%%{a2}%%' or UPPER(opis) like '%%{a3}%%';"""
+        query = """SELECT * FROM systemy WHERE id_systemu like '%%{a1}%%' or UPPER(nazwa) like '%%{a2}%%' or UPPER(opis) like '%%{a3}%%' ORDER BY nazwa;"""
         output = Systemy.objects.raw(query.format(a1=phrase, a2=phrase, a3=phrase))
         return render(request, "systems.html", {"Systemy": output})
 
-    output = Systemy.objects.raw("SELECT * FROM systemy")
+    output = Systemy.objects.raw("SELECT * FROM systemy ORDER BY nazwa")
     return render(request, "systems.html", {"Systemy": output})
 
 
@@ -343,13 +345,13 @@ def research(request):
 
     if request.method == "GET" and "search" in request.GET:
         phrase = request.GET["search"].upper()
-        query = """SELECT * FROM badania WHERE UPPER(id_badania) like '%%{a1}%%' or UPPER(nazwa) like '%%{a2}%%' or UPPER(opis) like '%%{a3}%%' or UPPER(data_wykonywania) like '%%{a4}%%';"""
+        query = """SELECT * FROM badania WHERE UPPER(id_badania) like '%%{a1}%%' or UPPER(nazwa) like '%%{a2}%%' or UPPER(opis) like '%%{a3}%%' or UPPER(data_wykonywania) like '%%{a4}%%' ORDER BY nazwa;"""
         output = Badania.objects.raw(
             query.format(a1=phrase, a2=phrase, a3=phrase, a4=phrase)
         )
         return render(request, "research.html", {"Badania": output})
 
-    output = Badania.objects.raw("SELECT * FROM badania")
+    output = Badania.objects.raw("SELECT * FROM badania ORDER BY nazwa")
     return render(request, "research.html", {"Badania": output})
 
 
@@ -383,13 +385,13 @@ def vehicle(request):
 
     if request.method == "GET" and "search" in request.GET:
         phrase = request.GET["search"].upper()
-        query = """SELECT * FROM pojazdy WHERE UPPER(id_pojazdu) like '%%{a1}%%' or UPPER(nazwa) like '%%{a2}%%' or UPPER(przeznaczenie) like '%%{a3}%%' or UPPER(ilosc_miejsc) like '%%{a4}%%';"""
+        query = """SELECT * FROM pojazdy WHERE UPPER(id_pojazdu) like '%%{a1}%%' or UPPER(nazwa) like '%%{a2}%%' or UPPER(przeznaczenie) like '%%{a3}%%' or UPPER(ilosc_miejsc) like '%%{a4}%%' ORDER BY nazwa;"""
         output = Pojazdy.objects.raw(
             query.format(a1=phrase, a2=phrase, a3=phrase, a4=phrase)
         )
         return render(request, "vehicle.html", {"Pojazdy": output})
 
-    output = Pojazdy.objects.raw("SELECT * FROM pojazdy")
+    output = Pojazdy.objects.raw("SELECT * FROM pojazdy ORDER BY nazwa")
     return render(request, "vehicle.html", {"Pojazdy": output})
 
 
@@ -423,7 +425,7 @@ def events(request):
 
     if request.method == "GET" and "search" in request.GET:
         phrase = request.GET["search"].upper()
-        query = """SELECT * FROM wydarzenia WHERE UPPER(id_wydarzenia) like '%%{a1}%%' or UPPER(nazwa) like '%%{a2}%%' or UPPER(opis) like '%%{a3}%%' or UPPER(potencjal_badawczy) like '%%{a4}%%' or UPPER(poziom_zagrozenia) like '%%{a5}%%' or UPPER(rodzaj_wydarzenia) like '%%{a6}%%' or UPPER(typ) like '%%{a7}%%';"""
+        query = """SELECT * FROM wydarzenia WHERE UPPER(id_wydarzenia) like '%%{a1}%%' or UPPER(nazwa) like '%%{a2}%%' or UPPER(opis) like '%%{a3}%%' or UPPER(potencjal_badawczy) like '%%{a4}%%' or UPPER(poziom_zagrozenia) like '%%{a5}%%' or UPPER(rodzaj_wydarzenia) like '%%{a6}%%' or UPPER(typ) like '%%{a7}%%' ORDER BY nazwa;"""
         output = Wydarzenia.objects.raw(
             query.format(
                 a1=phrase,
@@ -437,7 +439,7 @@ def events(request):
         )
         return render(request, "events.html", {"Wydarzenia": output})
 
-    output = Wydarzenia.objects.raw("SELECT * FROM wydarzenia")
+    output = Wydarzenia.objects.raw("SELECT * FROM wydarzenia ORDER BY nazwa")
     return render(request, "events.html", {"Wydarzenia": output})
 
 
@@ -489,13 +491,13 @@ def tasks(request):
 
     if request.method == "GET" and "search" in request.GET:
         phrase = request.GET["search"].upper()
-        query = """SELECT * FROM zadania WHERE UPPER(id_zadania) like '%%{a1}%%' or UPPER(nazwa) like '%%{a2}%%' or UPPER(opis) like '%%{a3}%%' or UPPER(data_wykonywania) like '%%{a4}%%';"""
+        query = """SELECT * FROM zadania WHERE UPPER(id_zadania) like '%%{a1}%%' or UPPER(nazwa) like '%%{a2}%%' or UPPER(opis) like '%%{a3}%%' or UPPER(data_wykonywania) like '%%{a4}%%' ORDER BY nazwa;"""
         output = Zadania.objects.raw(
             query.format(a1=phrase, a2=phrase, a3=phrase, a4=phrase)
         )
         return render(request, "tasks.html", {"Zadania": output})
 
-    output = Zadania.objects.raw("SELECT * FROM zadania")
+    output = Zadania.objects.raw("SELECT * FROM zadania ORDER BY nazwa")
     return render(request, "tasks.html", {"Zadania": output})
 
 
@@ -529,13 +531,15 @@ def people(request):
 
     if request.method == "GET" and "search" in request.GET:
         phrase = request.GET["search"].upper()
-        query = """SELECT * FROM kolonizatorzy WHERE UPPER(id_osoby) like '%%{a1}%%' or UPPER(imie) like '%%{a2}%%' or UPPER(nazwisko) like '%%{a3}%%' or UPPER(wiek) like '%%{a4}%%' or UPPER(typ) like '%%{a5}%%';"""
+        query = """SELECT * FROM kolonizatorzy WHERE UPPER(id_osoby) like '%%{a1}%%' or UPPER(imie) like '%%{a2}%%' or UPPER(nazwisko) like '%%{a3}%%' or UPPER(wiek) like '%%{a4}%%' or UPPER(typ) like '%%{a5}%%' ORDER BY imie,nazwisko;"""
         output = Kolonizatorzy.objects.raw(
             query.format(a1=phrase, a2=phrase, a3=phrase, a4=phrase, a5=phrase)
         )
         return render(request, "people.html", {"Kolonizatorzy": output})
 
-    output = Kolonizatorzy.objects.raw("SELECT * FROM kolonizatorzy")
+    output = Kolonizatorzy.objects.raw(
+        "SELECT * FROM kolonizatorzy ORDER BY imie,nazwisko"
+    )
     return render(request, "people.html", {"Kolonizatorzy": output})
 
 
@@ -571,11 +575,11 @@ def specs(request):
 
     if request.method == "GET" and "search" in request.GET:
         phrase = request.GET["search"].upper()
-        query = """SELECT * FROM specjalizacje WHERE UPPER(nazwa) like '%%{a1}%%' or UPPER(opis) like '%%{a2}%%';"""
+        query = """SELECT * FROM specjalizacje WHERE UPPER(nazwa) like '%%{a1}%%' or UPPER(opis) like '%%{a2}%%' ORDER BY nazwa;"""
         output = Specjalizacje.objects.raw(query.format(a1=phrase, a2=phrase))
         return render(request, "specs.html", {"Specjalizacje": output})
 
-    output = Specjalizacje.objects.raw("SELECT * FROM specjalizacje")
+    output = Specjalizacje.objects.raw("SELECT * FROM specjalizacje ORDER BY nazwa")
     return render(request, "specs.html", {"Specjalizacje": output})
 
 
@@ -622,7 +626,7 @@ def exp(request):
         cursor.close()
         return render(request, "exp.html", {"Doswiadczenia": output})
 
-    query = """SELECT d.*, k.imie AS imie, k.nazwisko AS nazwisko FROM doswiadczenia d INNER JOIN kolonizatorzy k on d.id_osoby = k.id_osoby;"""
+    query = """SELECT d.*, k.imie AS imie, k.nazwisko AS nazwisko FROM doswiadczenia d INNER JOIN kolonizatorzy k on d.id_osoby = k.id_osoby ORDER BY k.imie,k.nazwisko;"""
     cursor = connections["default"].cursor()
     cursor.execute(query)
     output = cursor.fetchall()

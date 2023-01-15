@@ -77,7 +77,7 @@
                         confirmButtonText: 'Kontynuuj'
                     }).then((result) => {
                         if (result.isConfirmed) {
-                            location.reload();
+                            window.location=document.referrer;
                         }
                     });
                 },

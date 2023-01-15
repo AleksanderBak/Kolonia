@@ -12,9 +12,12 @@
     <div class="p-10 font-font-1"> 
         <form method="get">
         <div class="bg-white/5 mb-4 px-2 py-3 flex flex-row rounded-md justify-between">
-                <div class="flex flex-row items-center">
-                    <a href="{{ request.path }}/new"><img class="mx-4 w-6 h-6 transition duration-75" src="{% static 'images/add.svg' %}" alt="pic"></a>
-                </div>
+            <div class="flex justify-center">
+                <button type="button" onclick="window.location.href='{{ request.path }}/new';" class="text-white right-2.5 bottom-2.5 border border-blue-600 hover:bg-blue-700 focus:outline-none font-medium rounded-lg text-sm px-4 py-1 my-1.5 mx-4">
+                    <img class="inline-block w-6 h-6 transition duration-75" src="{% static 'images/add.svg' %}" alt="pic"> 
+                    <p class="inline-block ml-2">Dodaj</p>
+                </button>
+            </div>
                 <div class="w-1/4 mr-4">
                     <label for="default-search" class="mb-2 text-sm font-medium text-gray-900 sr-only">Search</label>
                     <div class="relative">
