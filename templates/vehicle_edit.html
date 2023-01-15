@@ -13,15 +13,15 @@
     <div class="p-10 font-font-1 w-full flex pl-28">
         <div class="w-1/2">
             <div class="mb-6">
-              <label for="email" class="block mb-2 text-lg font-semibold text-white/40">Nazwa pojazdu</label>
-              <input id="nazwa" value="{{ Pojazd.nazwa }}" type="text" class="bg-white/10 border border-white/10 text-white text-sm rounded-lg focus:ring-blue-500/30 focus:border-blue-500/50 block w-full p-2.5" required>
+              <label for="email" class="block mb-2 text-lg font-semibold text-white/40">Nazwa pojazdu <span class="font-thin">(max 32 znaki)</span></label>
+              <input id="nazwa" value="{{ Pojazd.nazwa }}" type="text" class="bg-white/10 border border-white/10 text-white text-sm rounded-lg focus:ring-blue-500/30 focus:border-blue-500/50 block w-full p-2.5" maxlength="32" required>
             </div>
             <div class="mb-6">
-                <label for="password" class="block mb-2 text-lg font-semibold text-white/40">Przeznaczenie</label>
-                <input value="{{ Pojazd.przeznaczenie }}" id="przeznaczenie" type="text"  class="bg-white/10 border border-white/10 text-white text-sm rounded-lg focus:ring-blue-500/30 focus:border-blue-500/50 block w-full p-2.5 "></input>
+                <label for="password" class="block mb-2 text-lg font-semibold text-white/40">Przeznaczenie <span class="font-thin">(max 32 znaki)</span></label>
+                <input value="{{ Pojazd.przeznaczenie }}" id="przeznaczenie" type="text"  class="bg-white/10 border border-white/10 text-white text-sm rounded-lg focus:ring-blue-500/30 focus:border-blue-500/50 block w-full p-2.5" maxlength="32"></input>
             </div>
             <div class="mb-6">
-                <label for="password" class="block mb-2 text-lg font-semibold text-white/40">Ilość miejsc</label>
+                <label for="password" class="block mb-2 text-lg font-semibold text-white/40">Ilość miejsc <span class="font-thin">(od 0 do 99)</span></label>
                 <input id="miejsca" value="{{ Pojazd.ilosc_miejsc }}" type="number"  class="bg-white/10 border border-white/10 text-white text-sm rounded-lg focus:ring-blue-500/30 focus:border-blue-500/50 block w-full p-2.5 "></input>
             </div>
             <input id="id_pojazdu" type="hidden" value="{{Pojazd.id_pojazdu}}">
@@ -37,38 +37,47 @@
         let przeznaczenie = document.getElementById("przeznaczenie").value;
         let miejsca = document.getElementById("miejsca").value;
         let id = document.getElementById("id_pojazdu").value;
-        let valid = true;
-        if (valid) {
-            $.ajax(
-            {
-            type:"POST",
-            url: "",
-            data:{
-                csrfmiddlewaretoken: window.CSRF_TOKEN,
-                nazwa: nazwa,
-                przeznaczenie: przeznaczenie,
-                miejsca: miejsca,
-                id: id,
-            },
-            success: function() {
-                Swal.fire({
-                    title: 'Sukces!',
-                    text: 'Pojazd został zedytowany',
-                    icon: 'success',
-                    confirmButtonColor: '#3EB489',
-                    confirmButtonText: 'Kontynuuj'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        window.location=document.referrer;
-                    }
-                });
-            },
-            error: function () {
-                Swal.fire('Błąd', 'Wysąpił błąd w trakcie próby edycji pojazdu', 'error')
-            }
-            });
+        let empty = false;
+        if (nazwa == "" || przeznaczenie == "" || miejsca == "") {
+            Swal.fire('Uzupełnij wszystkie pola formularza', '', 'info')
+            empty = true;
         } else {
-            Swal.fire('Niepoprawne dane', '', 'error')
+            nazwa = capitalize(nazwa)
+            przeznaczenie = capitalize(przeznaczenie)
+        }
+        if (!empty) {
+            let valid = true;
+            valid = checkNumber(miejsca, "ilość miejsc", 0, 99)
+            if (valid) {
+                $.ajax(
+                {
+                type:"POST",
+                url: "",
+                data:{
+                    csrfmiddlewaretoken: window.CSRF_TOKEN,
+                    nazwa: nazwa,
+                    przeznaczenie: przeznaczenie,
+                    miejsca: miejsca,
+                    id: id,
+                },
+                success: function() {
+                    Swal.fire({
+                        title: 'Sukces!',
+                        text: 'Pojazd został zedytowany',
+                        icon: 'success',
+                        confirmButtonColor: '#3EB489',
+                        confirmButtonText: 'Kontynuuj'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            window.location=document.referrer;
+                        }
+                    });
+                },
+                error: function () {
+                    Swal.fire('Błąd', 'Wysąpił błąd w trakcie próby edycji pojazdu', 'error')
+                }
+                });
+            }
         }
     });
     </script>

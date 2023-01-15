@@ -13,11 +13,11 @@
     <div class="p-10 font-font-1 w-full flex pl-28">
         <div class="w-1/2">
             <div class="mb-6">
-              <label for="email" class="block mb-2 text-lg font-semibold text-white/40">Nazwa</label>
+              <label for="email" class="block mb-2 text-lg font-semibold text-white/40">Nazwa <span class="font-thin">(max 32 znaków)</span></label>
               <input id="nazwa" type="text" value="{{Badanie.nazwa}}" class="bg-white/10 border border-white/10 text-white text-sm rounded-lg focus:ring-blue-500/30 focus:border-blue-500/50 block w-full p-2.5" required>
             </div>
             <div class="mb-6">
-              <label for="password" class="block mb-2 text-lg font-semibold text-white/40">Opis</label>
+              <label for="password" class="block mb-2 text-lg font-semibold text-white/40">Opis <span class="font-thin">(max 256 znaków)</span></label>
               <textarea id="opis" cols="30" rows="8" class="bg-white/10 border border-white/10 text-white text-sm rounded-lg focus:ring-blue-500/30 focus:border-blue-500/50 block w-full p-2.5 ">{{Badanie.opis}}</textarea>
             </div>
             <div class="mb-6">
@@ -37,8 +37,15 @@
         let opis = document.getElementById("opis").value;
         let data = document.getElementById("data").value;
         let id = document.getElementById("id_badania").value;
+        let empty = false;
+        if (nazwa == "" || opis == "" || data == "") {
+            Swal.fire('Uzupełnij wszystkie pola formularza', '', 'info')
+            empty = true;
+        } else {
+            nazwa = capitalize(nazwa);
+        }
         let valid = true;
-        if (valid) {
+        if (valid && !empty) {
             $.ajax(
             {
             type:"POST",
@@ -64,11 +71,9 @@
                 });
             },
             error: function () {
-                Swal.fire('Błąd', 'Wysąpił błąd w trakcie próby edycji badania', 'error')
+                Swal.fire('Błąd', 'Wysąpił błąd w trakcie edycji badania', 'error')
             }
             });
-        } else {
-            Swal.fire('Niepoprawne dane', '', 'error')
         }
     });
     </script>

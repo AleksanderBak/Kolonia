@@ -7,7 +7,7 @@
     <div class="w-full h-20 flex flex-row items-center border-b-1 border-white/20 font-font-1">
         <img class="ml-8 w-12 h-12 transition duration-75" src="{% static 'images/navbar-icon.svg' %}" alt="pic">
         <span class="ml-3 font-font-1 text-white/40" >Kolonia marsjańska  &nbsp;&nbsp;&nbsp;/&nbsp;&nbsp;&nbsp;</span>
-        <span class="ml-3 font-font-1 text-white" >Edytowanie systemów powiązanych z pomieszczeniami</span>
+        <span class="ml-3 font-font-1 text-white" >Edytowanie systemu powiązanego z pomieszczeniem</span>
     </div>
     
     <div class="p-10 font-font-1 w-full flex pl-28">
@@ -28,7 +28,10 @@
                 {% endfor %}
               </select>
             </div>
-            <button id="submitbutton" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center">Zapisz</button>
+            <div class="flex flex-row justify-between w-1/4">
+                <button id="submitbutton" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-1 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center">Zapisz</button>
+                <button onclick="window.location=document.referrer" class="ml-4 text-white bg-red-700 hover:bg-red-800 focus:ring-1 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center">Anuluj</button>
+            </div>
         </div>
     </div>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
@@ -38,8 +41,13 @@
     $('#submitbutton').click(function(){
         let id_pom = document.getElementById("nr_pomieszczenia").value;
         let id_sys = document.getElementById("id_systemu").value;
-        let valid = true;
-        if (valid) {
+        let empty = false;
+        if (id_pom == "" || id_sys == "") {
+            Swal.fire('Uzupełnij wszystkie pola formularza', '', 'info')
+            empty = true;
+        }
+        if (!empty) {
+            let valid = true;
             $.ajax(
                 {
                 type:"POST",
@@ -63,11 +71,9 @@
                 });
                 },
                 error: function () {
-                    Swal.fire('Taki system już istenieje w tym pomieszczeniu', '', 'error')
+                    Swal.fire('Ten system już istenieje w tym pomieszczeniu', '', 'error')
                 }
             }) 
-        }else {
-            Swal.fire('Niepoprawne dane', '', 'error')
         }
     });
     </script>

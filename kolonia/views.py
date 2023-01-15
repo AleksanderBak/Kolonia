@@ -1220,7 +1220,7 @@ def researchesVehiclesNew(request):
 
     return render(
         request,
-        "tasks_vehicles_new.html",
+        "researches_vehicles_new.html",
         {"Badania": badania, "Pojazdy": pojazdy},
     )
 

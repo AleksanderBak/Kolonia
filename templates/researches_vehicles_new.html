@@ -7,15 +7,15 @@
     <div class="w-full h-20 flex flex-row items-center border-b-1 border-white/20 font-font-1">
         <img class="ml-8 w-12 h-12 transition duration-75" src="{% static 'images/navbar-icon.svg' %}" alt="pic">
         <span class="ml-3 font-font-1 text-white/40" >Kolonia marsjańska  &nbsp;&nbsp;&nbsp;/&nbsp;&nbsp;&nbsp;</span>
-        <span class="ml-3 font-font-1 text-white" >Dodawania pojazdu do zadania</span>
+        <span class="ml-3 font-font-1 text-white" >Dodawania pojazdu do badania</span>
     </div>
     <div class="p-10 font-font-1 w-full flex pl-28">
         <div class="w-1/2">
             <div class="mb-6">
-              <label for="email" class="block mb-2 text-lg font-semibold text-white/40">Zadanie</label>
-              <select id="id_zad" type="text" class="bg-white/10 border border-white/10 text-white text-sm rounded-lg focus:ring-blue-500/30 focus:border-blue-500/50 block w-full p-2.5" required>
-                {% for z in Zadania %}
-                <option class="bg-main-dark text-white" value="{{z.id_zadania}}">{{z.nazwa}}</option>
+              <label for="email" class="block mb-2 text-lg font-semibold text-white/40">Badanie</label>
+              <select id="id_bad" type="text" class="bg-white/10 border border-white/10 text-white text-sm rounded-lg focus:ring-blue-500/30 focus:border-blue-500/50 block w-full p-2.5" required>
+                {% for b in Badania %}
+                <option class="bg-main-dark text-white" value="{{b.id_badania}}">{{b.nazwa}}</option>
                 {% endfor %}
               </select>
             </div>
@@ -27,7 +27,10 @@
                     {% endfor %}
                 </select>
             </div>
-            <button id="submitbutton" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center">Dodaj</button>
+            <div class="flex flex-row justify-between w-1/4">
+                <button id="submitbutton" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-1 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center">Dodaj</button>
+                <button onclick="window.location=document.referrer" class="ml-4 text-white bg-red-700 hover:bg-red-800 focus:ring-1 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center">Anuluj</button>
+            </div>
         </div>
     </div>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
@@ -36,9 +39,9 @@
     <script type="text/javascript">
     $('#submitbutton').click(function(){
         let id_poj = document.getElementById("id_poj").value;
-        let id_zad = document.getElementById("id_zad").value;
+        let id_bad = document.getElementById("id_bad").value;
         let empty = false;
-        if (id_poj == "" || id_zad == "") {
+        if (id_poj == "" || id_bad == "") {
             Swal.fire('Uzupełnij wszystkie pola formularza', '', 'info')
             empty = true;
         }
@@ -51,12 +54,12 @@
             data:{
                 csrfmiddlewaretoken: window.CSRF_TOKEN,
                 id_poj: id_poj,
-                id_zad: id_zad,
+                id_bad: id_bad,
             },
             success: function() {
                 Swal.fire({
                     title: 'Sukces!',
-                    text: 'Ustalono pojazd dla zadania',
+                    text: 'Dodano pojazd dla badania',
                     icon: 'success',
                     confirmButtonColor: '#3EB489',
                     confirmButtonText: 'Kontynuuj'
@@ -67,7 +70,7 @@
                 });
             },
             error: function () {
-                Swal.fire('Ten pojazd jest już przypisany do tego zadania', '', 'error')
+                Swal.fire('Ten pojazd jest już przypisany do tego badania', '', 'error')
             }
             })
         }

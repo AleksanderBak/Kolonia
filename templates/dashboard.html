@@ -8,7 +8,7 @@
         <div class="w-full h-20 flex flex-row items-center border-b-1 border-white/20 font-font-1">
             <img class="ml-8 w-12 h-12 transition duration-75" src="{% static 'images/navbar-icon.svg' %}" alt="pic">
             <span class="ml-3 font-font-1 text-white/40" >Kolonia marsjańska  &nbsp;&nbsp;&nbsp;/&nbsp;&nbsp;&nbsp;</span>
-            <span class="ml-3 font-font-1 text-white" >Dashboard</span>
+            <span class="ml-3 font-font-1 text-white" >Panel informacyjny</span>
         </div>
         <div class="p-12 h-full">
             <div class="flex flex-row justify-between">
@@ -120,10 +120,10 @@
                                             <td scope="row" class="px-6 py-4 font-medium">
                                                 {{w.1}}
                                             </td>
-                                            <td scope="row" class="px-6 py-4 font-medium">
+                                            <td scope="row" class="px-6 py-4 font-medium {% if w.4 > 6 %}text-red-500{% elif w.4 < 4%}text-green-500{% else %}text-yellow-300{% endif %}">
                                                 {{w.4}}
                                             </td>
-                                            <td scope="row" class="px-6 py-4 font-medium">
+                                            <td scope="row" class="px-6 py-4 font-medium {% if w.3 > 6 %}text-green-500{% elif w.3 > 4 %}text-yellow-300{% else %}text-white{% endif %}">
                                                 {{w.3}}
                                             </td>
                                             <td scope="row" class="px-6 py-4 font-medium">
@@ -147,45 +147,51 @@
     <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script type="text/javascript">
     $('#submitbutton').click(function(){
-        let zasob = capitalize(document.getElementById("zasob").value);
+        let zasob = document.getElementById("zasob").value;
         let pomieszczenie = document.getElementById("pomieszczenie").value;
-        let jednostka = capitalize(document.getElementById("jednostka").value);
+        let jednostka = document.getElementById("jednostka").value;
         let liczba = document.getElementById("liczba").value;
         let empty = false;
         if (zasob == "" || pomieszczenie == "" || jednostka == "" || liczba == "") {
             Swal.fire('Uzupełnij wszystkie pola formularza', '', 'info')
             empty = true;
+        } else {
+            zasob = capitalize(zasob);
+            jednostka = capitalize(jednostka);
         }
         if (!empty) {
             let valid = true;
-            $.ajax(
-            {
-            type:"POST",
-            url: "",
-            data:{
-                csrfmiddlewaretoken: window.CSRF_TOKEN,
-                zasob: zasob,
-                pomieszczenie: pomieszczenie,
-                jednostka: jednostka,
-                liczba: liczba,
-            },
-            success: function() {
-                Swal.fire({
-                    title: 'Sukces!',
-                    text: 'Dodano nowy zasób',
-                    icon: 'success',
-                    confirmButtonColor: '#3EB489',
-                    confirmButtonText: 'Kontynuuj'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        location.reload();
-                    }
-                });
-            },
-            error: function () {
-                Swal.fire('Wystąpił błąd w trakcie dodawania zasobu', '', 'error')
+            valid = checkFloatNumber(liczba, "liczba", 0.01, 9999.99)
+            if (valid) {
+                $.ajax(
+                {
+                type:"POST",
+                url: "",
+                data:{
+                    csrfmiddlewaretoken: window.CSRF_TOKEN,
+                    zasob: zasob,
+                    pomieszczenie: pomieszczenie,
+                    jednostka: jednostka,
+                    liczba: liczba,
+                },
+                success: function() {
+                    Swal.fire({
+                        title: 'Sukces!',
+                        text: 'Dodano nowy zasób',
+                        icon: 'success',
+                        confirmButtonColor: '#3EB489',
+                        confirmButtonText: 'Kontynuuj'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            location.reload();
+                        }
+                    });
+                },
+                error: function () {
+                    Swal.fire('Wystąpił błąd w trakcie dodawania zasobu', '', 'error')
+                }
+                })
             }
-            })
         }
     });
     </script>

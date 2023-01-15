@@ -7,7 +7,7 @@
     <div class="w-full h-20 flex flex-row items-center border-b-1 border-white/20 font-font-1">
         <img class="ml-8 w-12 h-12 transition duration-75" src="{% static 'images/navbar-icon.svg' %}" alt="pic">
         <span class="ml-3 font-font-1 text-white/40" >Kolonia marsjańska  &nbsp;&nbsp;&nbsp;/&nbsp;&nbsp;&nbsp;</span>
-        <span class="ml-3 font-font-1 text-white" >Edytowanie doświadczeń kolonizatorów</span>
+        <span class="ml-3 font-font-1 text-white" >Edytowanie doświadczenia zawodowego</span>
     </div>
     
     <div class="p-10 font-font-1 w-full flex pl-28">
@@ -32,7 +32,10 @@
                 <label for="password" class="block mb-2 text-lg font-semibold text-white/40">Liczba lat</label>
                 <input id="liczba_lat" value="{{Doswiadczenie.2}}" type="number" class="bg-white/10 border border-white/10 text-white text-sm rounded-lg focus:ring-blue-500/30 focus:border-blue-500/50 block w-full p-2.5" required>
             </div>
-            <button id="submitbutton" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center">Zapisz</button>
+            <div class="flex flex-row justify-between w-1/4">
+                <button id="submitbutton" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-1 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center">Zapisz</button>
+                <button onclick="window.location=document.referrer" class="ml-4 text-white bg-red-700 hover:bg-red-800 focus:ring-1 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center">Anuluj</button>
+            </div>
         </div>
     </div>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
@@ -43,8 +46,14 @@
         let id_os = document.getElementById("id_os").value;
         let nazwa = document.getElementById("nazwa").value;
         let lata = document.getElementById("liczba_lat").value;
+        let empty = false;
+        if (id_os == "" || lata == "" || nazwa == "") {
+            Swal.fire('Uzupełnij wszystkie pola formularza', '', 'info')
+            empty = true;
+        }
         let valid = true;
-        if (valid) {
+        valid = checkNumber(lata, "liczba lat", 1, 999);
+        if (valid && !empty) {
             $.ajax(
                 {
                 type:"POST",
@@ -72,8 +81,6 @@
                     Swal.fire('Błąd', 'Podany kolonizator posiada już przypisane doświadczenie w tej specjalizacji lub istnieją zależności w innych tabelach', 'error')
                 }
             }) 
-        }else {
-            Swal.fire('Niepoprawne dane', '', 'error')
         }
     });
     </script>

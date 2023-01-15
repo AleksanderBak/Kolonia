@@ -12,16 +12,16 @@
     <div class="p-10 font-font-1 w-full flex pl-28">
         <div class="w-1/2">
             <div class="mb-6">
-              <label for="email" class="block mb-2 text-lg font-semibold text-white/40">Imie</label>
-              <input id="imie" type="text" class="bg-white/10 border border-white/10 text-white text-sm rounded-lg focus:ring-blue-500/30 focus:border-blue-500/50 block w-full p-2.5" required>
+              <label for="email" class="block mb-2 text-lg font-semibold text-white/40">Imie <span class="font-thin">(max 32 znaki)</span></label>
+              <input id="imie" type="text" class="bg-white/10 border border-white/10 text-white text-sm rounded-lg focus:ring-blue-500/30 focus:border-blue-500/50 block w-full p-2.5" required maxlength="32">
             </div>
             <div class="mb-6">
-                <label for="password" class="block mb-2 text-lg font-semibold text-white/40">Nazwisko</label>
-                <input id="nazwisko" type="text" class="bg-white/10 border border-white/10 text-white text-sm rounded-lg focus:ring-blue-500/30 focus:border-blue-500/50 block w-full p-2.5" required>
+                <label for="password" class="block mb-2 text-lg font-semibold text-white/40">Nazwisko <span class="font-thin">(max 32 znaki)</span></label>
+                <input id="nazwisko" type="text" class="bg-white/10 border border-white/10 text-white text-sm rounded-lg focus:ring-blue-500/30 focus:border-blue-500/50 block w-full p-2.5" required maxlength="32">
             </div>
             <div class="mb-6">
                 <label for="password" class="block mb-2 text-lg font-semibold text-white/40">Wiek</label>
-                <input id="wiek" type="number"  class="bg-white/10 border border-white/10 text-white text-sm rounded-lg focus:ring-blue-500/30 focus:border-blue-500/50 block w-full p-2.5 "></input>
+                <input id="wiek" type="number"  class="bg-white/10 border border-white/10 text-white text-sm rounded-lg focus:ring-blue-500/30 focus:border-blue-500/50 block w-full p-2.5" maxlength="3" min="1" max="999"></input>
             </div>
             <div class="mb-6">
                 <label for="password" class="block mb-2 text-lg font-semibold text-white/40">Typ</label>
@@ -32,7 +32,7 @@
             </div>
             <div class="flex flex-row justify-between w-1/4">
                 <button id="submitbutton" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-1 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center">Dodaj</button>
-                <button onclick="window.location=document.referrer" class="text-white bg-red-700 hover:bg-red-800 focus:ring-1 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center">Anuluj</button>
+                <button onclick="window.location=document.referrer" class="ml-4 text-white bg-red-700 hover:bg-red-800 focus:ring-1 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center">Anuluj</button>
             </div>
         </div>
     </div>
@@ -49,37 +49,43 @@
         if (imie == "" || nazwisko == "" || wiek == "" || typ == "") {
             Swal.fire('Uzupełnij wszystkie pola formularza', '', 'info')
             empty = true;
+        } else {
+            imie = capitalize(imie)
+            nazwisko = capitalize(nazwisko)
         }
         if (!empty) {
             let valid = true;
-            $.ajax(
-            {
-            type:"POST",
-            url: "",
-            data:{
-                csrfmiddlewaretoken: window.CSRF_TOKEN,
-                imie: imie,
-                nazwisko: nazwisko,
-                wiek: wiek,
-                typ: typ
-            },
-            success: function() {
-                Swal.fire({
-                    title: 'Sukces!',
-                    text: 'Dodano nowe wydarzenie',
-                    icon: 'success',
-                    confirmButtonColor: '#3EB489',
-                    confirmButtonText: 'Kontynuuj'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        location.reload();
-                    }
-                });
-            },
-            error: function () {
-                Swal.fire('Wystąpił błąd w trakcie dodawania wydarzenia', '', 'error')
+            valid = checkNumber(wiek, "wiek", 1, 999)
+            if (valid) {
+                $.ajax(
+                {
+                type:"POST",
+                url: "",
+                data:{
+                    csrfmiddlewaretoken: window.CSRF_TOKEN,
+                    imie: imie,
+                    nazwisko: nazwisko,
+                    wiek: wiek,
+                    typ: typ
+                },
+                success: function() {
+                    Swal.fire({
+                        title: 'Sukces!',
+                        text: 'Dodano nowego kolonizatora',
+                        icon: 'success',
+                        confirmButtonColor: '#3EB489',
+                        confirmButtonText: 'Kontynuuj'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            location.reload();
+                        }
+                    });
+                },
+                error: function () {
+                    Swal.fire('Wystąpił błąd w trakcie dodawania kolonizatora', '', 'error')
+                }
+                })
             }
-            })
         }
     });
     </script>

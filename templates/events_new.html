@@ -12,19 +12,19 @@
     <div class="p-10 font-font-1 w-full flex pl-28">
         <div class="w-1/2">
             <div class="mb-6">
-              <label for="email" class="block mb-2 text-lg font-semibold text-white/40">Nazwa</label>
-              <input id="nazwa" type="text" class="bg-white/10 border border-white/10 text-white text-sm rounded-lg focus:ring-blue-500/30 focus:border-blue-500/50 block w-full p-2.5" required>
+              <label for="email" class="block mb-2 text-lg font-semibold text-white/40">Nazwa <span class="font-thin">(max 32 znaki)</span></label>
+              <input id="nazwa" type="text" class="bg-white/10 border border-white/10 text-white text-sm rounded-lg focus:ring-blue-500/30 focus:border-blue-500/50 block w-full p-2.5" maxlength="32" required>
             </div>
             <div class="mb-6">
-                <label for="password" class="block mb-2 text-lg font-semibold text-white/40">Opis</label>
-                <textarea id="opis" cols="30" rows="8" class="bg-white/10 border border-white/10 text-white text-sm rounded-lg focus:ring-blue-500/30 focus:border-blue-500/50 block w-full p-2.5 "></textarea>
+                <label for="password" class="block mb-2 text-lg font-semibold text-white/40">Opis <span class="font-thin">(max 256 znaków)</span></label>
+                <textarea id="opis" cols="30" rows="8" class="bg-white/10 border border-white/10 text-white text-sm rounded-lg focus:ring-blue-500/30 focus:border-blue-500/50 block w-full p-2.5" maxlength="256"></textarea>
             </div>
             <div class="mb-6">
-                <label for="password" class="block mb-2 text-lg font-semibold text-white/40">Potencjał badawczy</label>
+                <label for="password" class="block mb-2 text-lg font-semibold text-white/40">Potencjał badawczy <span class="font-thin">(od 0 do 10)</span></label>
                 <input id="potencjal" type="number"  class="bg-white/10 border border-white/10 text-white text-sm rounded-lg focus:ring-blue-500/30 focus:border-blue-500/50 block w-full p-2.5 "></input>
             </div>
             <div class="mb-6">
-                <label for="password" class="block mb-2 text-lg font-semibold text-white/40">Poziom zagrożenia</label>
+                <label for="password" class="block mb-2 text-lg font-semibold text-white/40">Poziom zagrożenia <span class="font-thin">(od 0 do 10)</span></label>
                 <input id="zagrozenie" type="number"  class="bg-white/10 border border-white/10 text-white text-sm rounded-lg focus:ring-blue-500/30 focus:border-blue-500/50 block w-full p-2.5 "></input>
             </div>
             <div class="mb-6">
@@ -41,7 +41,10 @@
                     <option value="Awaria" class="bg-main-dark text-white">Awaria</option>
                 </select>
               </div>
-            <button id="submitbutton" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center">Dodaj</button>
+              <div class="flex flex-row justify-between w-1/4">
+                <button id="submitbutton" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-1 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center">Dodaj</button>
+                <button onclick="window.location=document.referrer" class="ml-4 text-white bg-red-700 hover:bg-red-800 focus:ring-1 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center">Anuluj</button>
+            </div>
         </div>
     </div>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
@@ -59,39 +62,52 @@
         if (nazwa == "" || opis == ""  || potencjal == "" || zagrozenie == "" || rodzaj == "" || typ == "") {
             Swal.fire('Uzupełnij wszystkie pola formularza', '', 'info')
             empty = true;
+        } else {
+            nazwa = capitalize(nazwa);
         }
         if (!empty) {
             let valid = true;
-            $.ajax(
-            {
-            type:"POST",
-            url: "",
-            data:{
-                csrfmiddlewaretoken: window.CSRF_TOKEN,
-                nazwa: nazwa,
-                opis: opis,
-                potencjal: potencjal,
-                zagroz: zagrozenie,
-                rodzaj: rodzaj,
-                typ: typ
-            },
-            success: function() {
-                Swal.fire({
-                    title: 'Sukces!',
-                    text: 'Dodano nowe wydarzenie',
-                    icon: 'success',
-                    confirmButtonColor: '#3EB489',
-                    confirmButtonText: 'Kontynuuj'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        location.reload();
-                    }
-                });
-            },
-            error: function () {
-                Swal.fire('Wystąpił błąd w trakcie dodawania wydarzenia', '', 'error')
+            valid1 = checkNumber(potencjal, "potencjał badawczy", 0, 10)
+            valid2 = checkNumber(zagrozenie, "poziom zagrożenia", 0, 10)
+            console.log(valid1)
+            console.log(valid2)
+            if (valid1 + valid2 == 2) {
+                valid = true
+            } else {
+                valid = false
             }
-            })
+            if (valid) {
+                $.ajax(
+                {
+                type:"POST",
+                url: "",
+                data:{
+                    csrfmiddlewaretoken: window.CSRF_TOKEN,
+                    nazwa: nazwa,
+                    opis: opis,
+                    potencjal: potencjal,
+                    zagroz: zagrozenie,
+                    rodzaj: rodzaj,
+                    typ: typ
+                },
+                success: function() {
+                    Swal.fire({
+                        title: 'Sukces!',
+                        text: 'Dodano nowe wydarzenie',
+                        icon: 'success',
+                        confirmButtonColor: '#3EB489',
+                        confirmButtonText: 'Kontynuuj'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            location.reload();
+                        }
+                    });
+                },
+                error: function () {
+                    Swal.fire('Wystąpił błąd w trakcie dodawania wydarzenia', '', 'error')
+                }
+                })
+            }
         }
     });
     </script>

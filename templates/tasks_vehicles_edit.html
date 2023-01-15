@@ -27,7 +27,10 @@
                     {% endfor %}
                 </select>
             </div>
-            <button id="submitbutton" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center">Edytuj</button>
+            <div class="flex flex-row justify-between w-1/4">
+                <button id="submitbutton" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-1 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center">Edytuj</button>
+                <button onclick="window.location=document.referrer" class="ml-4 text-white bg-red-700 hover:bg-red-800 focus:ring-1 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center">Anuluj</button>
+            </div>
         </div>
     </div>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
@@ -37,34 +40,40 @@
     $('#submitbutton').click(function(){
         let id_zad = document.getElementById("id_zad").value;
         let id_poj = document.getElementById("id_poj").value;
-
-        let valid = true;
-        $.ajax(
-        {
-        type:"POST",
-        url: "",
-        data:{
-            csrfmiddlewaretoken: window.CSRF_TOKEN,
-            id_zad: id_zad,
-            id_poj: id_poj,
-        },
-        success: function() {
-            Swal.fire({
-                title: 'Sukces!',
-                text: 'Zedytowano pojazd dla zadania',
-                icon: 'success',
-                confirmButtonColor: '#3EB489',
-                confirmButtonText: 'Kontynuuj'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    window.location=document.referrer;
-                }                
-            });
-        },
-        error: function () {
-            Swal.fire('Ten pojazd jest już przypisany do tego zadania', '', 'error')
+        let empty = false;
+        if (id_poj == "" || id_zad == "") {
+            Swal.fire('Uzupełnij wszystkie pola formularza', '', 'info')
+            empty = true;
         }
-        })
+        if (!empty) {
+            let valid = true;
+            $.ajax(
+            {
+            type:"POST",
+            url: "",
+            data:{
+                csrfmiddlewaretoken: window.CSRF_TOKEN,
+                id_zad: id_zad,
+                id_poj: id_poj,
+            },
+            success: function() {
+                Swal.fire({
+                    title: 'Sukces!',
+                    text: 'Zedytowano pojazd dla zadania',
+                    icon: 'success',
+                    confirmButtonColor: '#3EB489',
+                    confirmButtonText: 'Kontynuuj'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        window.location=document.referrer;
+                    }                
+                });
+            },
+            error: function () {
+                Swal.fire('Ten pojazd jest już przypisany do tego zadania', '', 'error')
+            }
+            })
+        }
     });
     </script>
 {% endblock content %}
