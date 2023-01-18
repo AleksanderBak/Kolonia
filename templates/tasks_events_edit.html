@@ -11,24 +11,26 @@
     </div>
     <div class="p-10 font-font-1 w-full flex pl-28">
         <div class="w-1/2">
-            <div class="mb-6">
-              <label for="email" class="block mb-2 text-lg font-semibold text-white/40">Zadanie</label>
-              <select id="id_zad" type="text" class="bg-white/10 border border-white/10 text-white text-sm rounded-lg focus:ring-blue-500/30 focus:border-blue-500/50 block w-full p-2.5" required>
-                {% for z in Zadania %}
-                <option class="bg-main-dark text-white" value="{{z.id_zadania}}" {% if z.id_zadania == id_zadania %}selected{% endif %}>{{z.nazwa}}</option>
-                {% endfor %}
-              </select>
-            </div>
-            <div class="mb-6">
-                <label for="email" class="block mb-2 text-lg font-semibold text-white/40">Wydarzenie</label>
-                <select id="id_wyd" type="text" class="bg-white/10 border border-white/10 text-white text-sm rounded-lg focus:ring-blue-500/30 focus:border-blue-500/50 block w-full p-2.5" required>
-                    {% for w in Wydarzenia %}
-                    <option class="bg-main-dark text-white" value="{{w.id_wydarzenia}}" {% if w.id_wydarzenia == id_wydarzenia %}selected{% endif %}>{{w.nazwa}}</option>
+            <div id="form-box">
+                <div class="mb-6">
+                <label for="email" class="block mb-2 text-lg font-semibold text-white/40">Zadanie</label>
+                <select id="id_zad" type="text" class="bg-white/10 border border-white/10 text-white text-sm rounded-lg focus:ring-blue-500/30 focus:border-blue-500/50 block w-full p-2.5" required>
+                    {% for z in Zadania %}
+                    <option class="bg-main-dark text-white" value="{{z.id_zadania}}" {% if z.id_zadania == id_zadania %}selected{% endif %}>{{z.nazwa}}</option>
                     {% endfor %}
                 </select>
+                </div>
+                <div class="mb-6">
+                    <label for="email" class="block mb-2 text-lg font-semibold text-white/40">Wydarzenie</label>
+                    <select id="id_wyd" type="text" class="bg-white/10 border border-white/10 text-white text-sm rounded-lg focus:ring-blue-500/30 focus:border-blue-500/50 block w-full p-2.5" required>
+                        {% for w in Wydarzenia %}
+                        <option class="bg-main-dark text-white" value="{{w.id_wydarzenia}}" {% if w.id_wydarzenia == id_wydarzenia %}selected{% endif %}>{{w.nazwa}}</option>
+                        {% endfor %}
+                    </select>
+                </div>
             </div>
             <div class="flex flex-row justify-between w-1/4">
-                <button id="submitbutton" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-1 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center">Zapisz</button>
+                <button id="submitbutton" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-1 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center" disabled>Zapisz</button>
                 <button onclick="window.location=document.referrer" class="ml-4 text-white bg-red-700 hover:bg-red-800 focus:ring-1 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center">Anuluj</button>
             </div>
         </div>
@@ -37,6 +39,9 @@
     <script type="text/javascript"> window.CSRF_TOKEN = "{{ csrf_token }}"; </script>
     <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script type="text/javascript">
+    document.getElementById('form-box').addEventListener('change', function(event){
+        document.getElementById('submitbutton').disabled = false;
+    });
     $('#submitbutton').click(function(){
         let id_zad = document.getElementById("id_zad").value;
         let id_wyd = document.getElementById("id_wyd").value;
@@ -59,7 +64,7 @@
             success: function() {
                 Swal.fire({
                     title: 'Sukces!',
-                    text: 'Zedytowano zadanie dla wydarzenia',
+                    text: 'Zedytowano powiązanie zadania i wydarzenia',
                     icon: 'success',
                     confirmButtonColor: '#3EB489',
                     confirmButtonText: 'Kontynuuj'

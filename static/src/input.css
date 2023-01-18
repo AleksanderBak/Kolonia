@@ -12,6 +12,7 @@
 
   *::-webkit-scrollbar {
     width: 5px;
+    height: 5px;
   }
 
   *::-webkit-scrollbar-track {
@@ -23,3 +24,8 @@
     border-radius: 2px;
     border: 0px none #ffffff;
   }
+
+  #submitbutton:disabled {
+    background-color: gray;
+  }
+

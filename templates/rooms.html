@@ -57,13 +57,13 @@
                 <tbody>
                     {% for pom in Pomieszczenia %}
                     <tr class="bg-main-dark border-b border-white/20 text-white">
-                        <th scope="row" class="px-6 py-4 font-medium whitespace-nowrap">
+                        <th scope="row" class="px-6 py-4 font-medium whitespace-wrap break-all">
                             {{pom.nr_pomieszczenia}}
                         </th>
-                        <th scope="row" class="px-6 py-4 font-medium whitespace-nowrap">
+                        <th scope="row" class="px-6 py-4 font-medium whitespace-wrap break-all">
                             {{pom.nazwa}}
                         </th>
-                        <td class="px-6 py-4">
+                        <td class="px-6 py-4 whitespace-wrap break-all">
                             {{pom.opis}}
                         </td>
                         <td class="px-6 py-4">

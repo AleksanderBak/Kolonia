@@ -111,7 +111,7 @@ def resources(request):
         output = Zasoby.objects.filter(nazwa__icontains=phrase)
         return render(request, "resources.html", {"Zasoby": output})
 
-    output = Zasoby.objects.raw("SELECT * FROM zasoby")
+    output = Zasoby.objects.raw("SELECT * FROM zasoby ORDER BY nazwa")
     return render(request, "resources.html", {"Zasoby": output})
 
 
@@ -171,8 +171,10 @@ def roomResNew(request):
         )
         cursor = connections["default"].cursor()
         cursor.execute(query)
-    zasoby = Zasoby.objects.raw("SELECT * FROM zasoby")
-    pomieszczenia = Pomieszczenia.objects.raw("SELECT * FROM pomieszczenia")
+    zasoby = Zasoby.objects.raw("SELECT * FROM zasoby ORDER BY nazwa")
+    pomieszczenia = Pomieszczenia.objects.raw(
+        "SELECT * FROM pomieszczenia ORDER BY nr_pomieszczenia"
+    )
     return render(
         request, "room_res_new.html", {"Zasoby": zasoby, "Pomieszczenia": pomieszczenia}
     )
@@ -206,8 +208,10 @@ def roomResEdit(request, id):
             transaction.set_autocommit(True)
             cursor.close()
 
-    pomieszczenia = Pomieszczenia.objects.raw("SELECT * FROM pomieszczenia")
-    zasoby = Zasoby.objects.raw("SELECT * FROM zasoby")
+    pomieszczenia = Pomieszczenia.objects.raw(
+        "SELECT * FROM pomieszczenia ORDER BY nr_pomieszczenia"
+    )
+    zasoby = Zasoby.objects.raw("SELECT * FROM zasoby ORDER BY nazwa")
 
     query = """SELECT * FROM zawartosci WHERE nr_pomieszczenia={a1} and nazwa='{a2}'"""
 
@@ -303,8 +307,10 @@ def roomSysNew(request):
         )
         cursor = connections["default"].cursor()
         cursor.execute(query)
-    systemy = Systemy.objects.raw("SELECT * FROM systemy")
-    pomieszczenia = Pomieszczenia.objects.raw("SELECT * FROM pomieszczenia")
+    systemy = Systemy.objects.raw("SELECT * FROM systemy ORDER BY nazwa")
+    pomieszczenia = Pomieszczenia.objects.raw(
+        "SELECT * FROM pomieszczenia ORDER BY nr_pomieszczenia"
+    )
     return render(
         request,
         "room_sys_new.html",
@@ -324,8 +330,10 @@ def roomSysEdit(request, id):
         cursor = connections["default"].cursor()
         cursor.execute(query)
         cursor.close()
-    systemy = Systemy.objects.raw("SELECT * FROM systemy")
-    pomieszczenia = Pomieszczenia.objects.raw("SELECT * FROM pomieszczenia")
+    systemy = Systemy.objects.raw("SELECT * FROM systemy ORDER BY nazwa")
+    pomieszczenia = Pomieszczenia.objects.raw(
+        "SELECT * FROM pomieszczenia ORDER BY nr_pomieszczenia"
+    )
     return render(
         request,
         "room_sys_edit.html",
@@ -646,8 +654,12 @@ def expNew(request):
         cursor.execute(query)
         cursor.close()
 
-    kolonizatorzy = Kolonizatorzy.objects.raw("SELECT * FROM kolonizatorzy")
-    specjalizacje = Specjalizacje.objects.raw("SELECT * FROM specjalizacje")
+    kolonizatorzy = Kolonizatorzy.objects.raw(
+        "SELECT * FROM kolonizatorzy ORDER BY imie,nazwisko"
+    )
+    specjalizacje = Specjalizacje.objects.raw(
+        "SELECT * FROM specjalizacje ORDER BY nazwa"
+    )
     return render(
         request,
         "exp_new.html",
@@ -684,8 +696,12 @@ def expEdit(request, id):
             transaction.set_autocommit(True)
             cursor.close()
 
-    kolonizatorzy = Kolonizatorzy.objects.raw("SELECT * FROM kolonizatorzy")
-    specjalizacje = Specjalizacje.objects.raw("SELECT * FROM specjalizacje")
+    kolonizatorzy = Kolonizatorzy.objects.raw(
+        "SELECT * FROM kolonizatorzy ORDER BY imie,nazwisko"
+    )
+    specjalizacje = Specjalizacje.objects.raw(
+        "SELECT * FROM specjalizacje ORDER BY nazwa"
+    )
 
     query = """SELECT * FROM doswiadczenia WHERE id_osoby={a1} and nazwa='{a2}'"""
 
@@ -719,7 +735,7 @@ def peopleTasks(request):
 
     if request.method == "GET" and "search" in request.GET:
         phrase = request.GET["search"].upper()
-        query = """SELECT kz.*, k.imie AS imie, k.nazwisko AS nazwisko, z.nazwa AS zadanie FROM kolonizatorzy_zadania kz INNER JOIN kolonizatorzy k on kz.id_osoby = k.id_osoby INNER JOIN zadania z on kz.id_zadania = z.id_zadania WHERE UPPER(k.imie) like '%%{a1}%%' OR UPPER(k.nazwisko) like '%%{a2}%%' OR UPPER(z.nazwa) like '%%{a3}%%' OR UPPER(kz.id_osoby) like '%%{a4}%%' OR UPPER(kz.id_zadania) like '%%{a5}%%';"""
+        query = """SELECT kz.*, k.imie AS imie, k.nazwisko AS nazwisko, z.nazwa AS zadanie FROM kolonizatorzy_zadania kz INNER JOIN kolonizatorzy k on kz.id_osoby = k.id_osoby INNER JOIN zadania z on kz.id_zadania = z.id_zadania WHERE UPPER(k.imie) like '%%{a1}%%' OR UPPER(k.nazwisko) like '%%{a2}%%' OR UPPER(z.nazwa) like '%%{a3}%%' OR UPPER(kz.id_osoby) like '%%{a4}%%' OR UPPER(kz.id_zadania) like '%%{a5}%%' ORDER BY k.imie,k.nazwisko;"""
         cursor = connections["default"].cursor()
         cursor.execute(
             query.format(a1=phrase, a2=phrase, a3=phrase, a4=phrase, a5=phrase)
@@ -728,7 +744,7 @@ def peopleTasks(request):
         cursor.close()
         return render(request, "people_tasks.html", {"KolonizatorzyZadania": output})
 
-    query = """SELECT kz.*, k.imie AS imie, k.nazwisko AS nazwisko, z.nazwa AS zadanie FROM kolonizatorzy_zadania kz INNER JOIN kolonizatorzy k on kz.id_osoby = k.id_osoby INNER JOIN zadania z on kz.id_zadania = z.id_zadania;"""
+    query = """SELECT kz.*, k.imie AS imie, k.nazwisko AS nazwisko, z.nazwa AS zadanie FROM kolonizatorzy_zadania kz INNER JOIN kolonizatorzy k on kz.id_osoby = k.id_osoby INNER JOIN zadania z on kz.id_zadania = z.id_zadania ORDER BY k.imie, k.nazwisko;"""
     cursor = connections["default"].cursor()
     cursor.execute(query)
     output = cursor.fetchall()
@@ -748,9 +764,9 @@ def peopleTasksNew(request):
         cursor.close()
 
     kolonizatorzy = Kolonizatorzy.objects.raw(
-        "SELECT * FROM kolonizatorzy WHERE typ = 'Zwykły'"
+        "SELECT * FROM kolonizatorzy WHERE typ = 'Zwykły' ORDER BY imie,nazwisko"
     )
-    zadania = Zadania.objects.raw("SELECT * FROM zadania")
+    zadania = Zadania.objects.raw("SELECT * FROM zadania ORDER BY nazwa")
 
     return render(
         request,
@@ -788,9 +804,9 @@ def peopleTasksEdit(request, id):
             cursor.close()
 
     kolonizatorzy = Kolonizatorzy.objects.raw(
-        "SELECT * FROM kolonizatorzy WHERE typ = 'Zwykły'"
+        "SELECT * FROM kolonizatorzy WHERE typ = 'Zwykły' ORDER BY imie,nazwisko"
     )
-    zadania = Zadania.objects.raw("SELECT * FROM zadania")
+    zadania = Zadania.objects.raw("SELECT * FROM zadania ORDER BY nazwa")
 
     return render(
         request,
@@ -817,7 +833,7 @@ def peopleResearch(request):
 
     if request.method == "GET" and "search" in request.GET:
         phrase = request.GET["search"].upper()
-        query = """SELECT kb.*, k.imie AS imie, k.nazwisko AS nazwisko, b.nazwa AS zadanie FROM kolonizatorzy_badania kb INNER JOIN kolonizatorzy k on kb.id_osoby = k.id_osoby INNER JOIN badania b on kb.id_badania = b.id_badania WHERE UPPER(k.imie) like '%%{a1}%%' OR UPPER(k.nazwisko) like '%%{a2}%%' OR UPPER(b.nazwa) like '%%{a3}%%' OR UPPER(kb.id_osoby) like '%%{a4}%%' OR UPPER(kb.id_badania) like '%%{a5}%%';"""
+        query = """SELECT kb.*, k.imie AS imie, k.nazwisko AS nazwisko, b.nazwa AS zadanie FROM kolonizatorzy_badania kb INNER JOIN kolonizatorzy k on kb.id_osoby = k.id_osoby INNER JOIN badania b on kb.id_badania = b.id_badania WHERE UPPER(k.imie) like '%%{a1}%%' OR UPPER(k.nazwisko) like '%%{a2}%%' OR UPPER(b.nazwa) like '%%{a3}%%' OR UPPER(kb.id_osoby) like '%%{a4}%%' OR UPPER(kb.id_badania) like '%%{a5}%%' ORDER BY k.imie,k.nazwisko;"""
         cursor = connections["default"].cursor()
         cursor.execute(
             query.format(a1=phrase, a2=phrase, a3=phrase, a4=phrase, a5=phrase)
@@ -826,7 +842,7 @@ def peopleResearch(request):
         cursor.close()
         return render(request, "people_tasks.html", {"KolonizatorzyZadania": output})
 
-    query = """SELECT kb.*, k.imie AS imie, k.nazwisko AS nazwisko, b.nazwa AS zadanie FROM kolonizatorzy_badania kb INNER JOIN kolonizatorzy k on kb.id_osoby = k.id_osoby INNER JOIN badania b on kb.id_badania = b.id_badania;"""
+    query = """SELECT kb.*, k.imie AS imie, k.nazwisko AS nazwisko, b.nazwa AS zadanie FROM kolonizatorzy_badania kb INNER JOIN kolonizatorzy k on kb.id_osoby = k.id_osoby INNER JOIN badania b on kb.id_badania = b.id_badania ORDER BY k.imie,k.nazwisko;"""
     cursor = connections["default"].cursor()
     cursor.execute(query)
     output = cursor.fetchall()
@@ -846,9 +862,9 @@ def peopleResearchNew(request):
         cursor.close()
 
     kolonizatorzy = Kolonizatorzy.objects.raw(
-        "SELECT * FROM kolonizatorzy WHERE typ = 'Badawczy'"
+        "SELECT * FROM kolonizatorzy WHERE typ = 'Badawczy' ORDER BY imie,nazwisko"
     )
-    badania = Badania.objects.raw("SELECT * FROM badania")
+    badania = Badania.objects.raw("SELECT * FROM badania ORDER BY nazwa")
 
     return render(
         request,
@@ -886,9 +902,9 @@ def peopleResearchEdit(request, id):
             cursor.close()
 
     kolonizatorzy = Kolonizatorzy.objects.raw(
-        "SELECT * FROM kolonizatorzy WHERE typ = 'Badawczy'"
+        "SELECT * FROM kolonizatorzy WHERE typ = 'Badawczy' ORDER BY imie,nazwisko"
     )
-    badania = Badania.objects.raw("SELECT * FROM badania")
+    badania = Badania.objects.raw("SELECT * FROM badania ORDER BY nazwa")
 
     return render(
         request,
@@ -915,14 +931,14 @@ def tasksRooms(request):
 
     if request.method == "GET" and "search" in request.GET:
         phrase = request.GET["search"].upper()
-        query = """SELECT zp.*, z.nazwa AS zadanie, p.nazwa AS pomieszczenie FROM zadania_pomieszczenia zp INNER JOIN zadania z on zp.id_zadania = z.id_zadania INNER JOIN pomieszczenia p on zp.nr_pomieszczenia = p.nr_pomieszczenia WHERE UPPER(p.nazwa) like '%%{a1}%%' OR UPPER(z.nazwa) like '%%{a2}%%' OR UPPER(zp.nr_pomieszczenia) like '%%{a3}%%';"""
+        query = """SELECT zp.*, z.nazwa AS zadanie, p.nazwa AS pomieszczenie FROM zadania_pomieszczenia zp INNER JOIN zadania z on zp.id_zadania = z.id_zadania INNER JOIN pomieszczenia p on zp.nr_pomieszczenia = p.nr_pomieszczenia WHERE UPPER(p.nazwa) like '%%{a1}%%' OR UPPER(z.nazwa) like '%%{a2}%%' OR UPPER(zp.nr_pomieszczenia) like '%%{a3}%%' ORDER BY z.nazwa;"""
         cursor = connections["default"].cursor()
         cursor.execute(query.format(a1=phrase, a2=phrase, a3=phrase))
         output = cursor.fetchall()
         cursor.close()
         return render(request, "tasks_rooms.html", {"ZadaniaPomieszczenia": output})
 
-    query = """SELECT zp.*, z.nazwa AS zadanie, p.nazwa AS pomieszczenie FROM zadania_pomieszczenia zp INNER JOIN zadania z on zp.id_zadania = z.id_zadania INNER JOIN pomieszczenia p on zp.nr_pomieszczenia = p.nr_pomieszczenia;"""
+    query = """SELECT zp.*, z.nazwa AS zadanie, p.nazwa AS pomieszczenie FROM zadania_pomieszczenia zp INNER JOIN zadania z on zp.id_zadania = z.id_zadania INNER JOIN pomieszczenia p on zp.nr_pomieszczenia = p.nr_pomieszczenia ORDER BY z.nazwa;"""
     cursor = connections["default"].cursor()
     cursor.execute(query)
     output = cursor.fetchall()
@@ -941,8 +957,10 @@ def tasksRoomsNew(request):
         cursor.execute(query)
         cursor.close()
 
-    zadania = Zadania.objects.raw("SELECT * FROM zadania")
-    pomieszczenia = Pomieszczenia.objects.raw("SELECT * FROM pomieszczenia")
+    zadania = Zadania.objects.raw("SELECT * FROM zadania ORDER BY nazwa")
+    pomieszczenia = Pomieszczenia.objects.raw(
+        "SELECT * FROM pomieszczenia ORDER BY nr_pomieszczenia"
+    )
 
     return render(
         request,
@@ -979,8 +997,10 @@ def tasksRoomsEdit(request, id):
             transaction.set_autocommit(True)
             cursor.close()
 
-    zadania = Zadania.objects.raw("SELECT * FROM zadania")
-    pomieszczenia = Pomieszczenia.objects.raw("SELECT * FROM pomieszczenia")
+    zadania = Zadania.objects.raw("SELECT * FROM zadania ORDER BY nazwa")
+    pomieszczenia = Pomieszczenia.objects.raw(
+        "SELECT * FROM pomieszczenia ORDER BY nr_pomieszczenia"
+    )
 
     return render(
         request,
@@ -1007,7 +1027,7 @@ def researchesRooms(request):
 
     if request.method == "GET" and "search" in request.GET:
         phrase = request.GET["search"].upper()
-        query = """SELECT bp.*, b.nazwa AS badanie, p.nazwa AS pomieszczenie FROM badania_pomieszczenia bp INNER JOIN badania b on bp.id_badania = b.id_badania INNER JOIN pomieszczenia p on bp.nr_pomieszczenia = p.nr_pomieszczenia WHERE UPPER(p.nazwa) like '%%{a1}%%' OR UPPER(b.nazwa) like '%%{a2}%%' OR UPPER(bp.nr_pomieszczenia) like '%%{a3}%%';"""
+        query = """SELECT bp.*, b.nazwa AS badanie, p.nazwa AS pomieszczenie FROM badania_pomieszczenia bp INNER JOIN badania b on bp.id_badania = b.id_badania INNER JOIN pomieszczenia p on bp.nr_pomieszczenia = p.nr_pomieszczenia WHERE UPPER(p.nazwa) like '%%{a1}%%' OR UPPER(b.nazwa) like '%%{a2}%%' OR UPPER(bp.nr_pomieszczenia) like '%%{a3}%%' ORDER BY b.nazwa;"""
         cursor = connections["default"].cursor()
         cursor.execute(query.format(a1=phrase, a2=phrase, a3=phrase))
         output = cursor.fetchall()
@@ -1016,7 +1036,7 @@ def researchesRooms(request):
             request, "researches_rooms.html", {"BadaniaPomieszczenia": output}
         )
 
-    query = """SELECT bp.*, b.nazwa AS badanie, p.nazwa AS pomieszczenie FROM badania_pomieszczenia bp INNER JOIN badania b on bp.id_badania = b.id_badania INNER JOIN pomieszczenia p on bp.nr_pomieszczenia = p.nr_pomieszczenia;"""
+    query = """SELECT bp.*, b.nazwa AS badanie, p.nazwa AS pomieszczenie FROM badania_pomieszczenia bp INNER JOIN badania b on bp.id_badania = b.id_badania INNER JOIN pomieszczenia p on bp.nr_pomieszczenia = p.nr_pomieszczenia ORDER BY b.nazwa;"""
     cursor = connections["default"].cursor()
     cursor.execute(query)
     output = cursor.fetchall()
@@ -1035,8 +1055,10 @@ def researchesRoomsNew(request):
         cursor.execute(query)
         cursor.close()
 
-    badania = Badania.objects.raw("SELECT * FROM badania")
-    pomieszczenia = Pomieszczenia.objects.raw("SELECT * FROM pomieszczenia")
+    badania = Badania.objects.raw("SELECT * FROM badania ORDER BY nazwa")
+    pomieszczenia = Pomieszczenia.objects.raw(
+        "SELECT * FROM pomieszczenia ORDER BY nr_pomieszczenia"
+    )
 
     return render(
         request,
@@ -1073,8 +1095,10 @@ def researchesRoomsEdit(request, id):
             transaction.set_autocommit(True)
             cursor.close()
 
-    badania = Badania.objects.raw("SELECT * FROM badania")
-    pomieszczenia = Pomieszczenia.objects.raw("SELECT * FROM pomieszczenia")
+    badania = Badania.objects.raw("SELECT * FROM badania ORDER BY nazwa")
+    pomieszczenia = Pomieszczenia.objects.raw(
+        "SELECT * FROM pomieszczenia ORDER BY nr_pomieszczenia"
+    )
 
     return render(
         request,
@@ -1101,14 +1125,14 @@ def tasksVehicles(request):
 
     if request.method == "GET" and "search" in request.GET:
         phrase = request.GET["search"].upper()
-        query = """SELECT zp.*, z.nazwa AS zadanie, p.nazwa AS pojazd FROM zadania_pojazdy zp INNER JOIN zadania z on zp.id_zadania = z.id_zadania INNER JOIN pojazdy p on zp.id_pojazdu = p.id_pojazdu WHERE UPPER(p.nazwa) like '%%{a1}%%' OR UPPER(z.nazwa) like '%%{a2}%%' OR UPPER(p.id_pojazdu) like '%%{a3}%%';"""
+        query = """SELECT zp.*, z.nazwa AS zadanie, p.nazwa AS pojazd FROM zadania_pojazdy zp INNER JOIN zadania z on zp.id_zadania = z.id_zadania INNER JOIN pojazdy p on zp.id_pojazdu = p.id_pojazdu WHERE UPPER(p.nazwa) like '%%{a1}%%' OR UPPER(z.nazwa) like '%%{a2}%%' OR UPPER(p.id_pojazdu) like '%%{a3}%%' ORDER BY z.nazwa;"""
         cursor = connections["default"].cursor()
         cursor.execute(query.format(a1=phrase, a2=phrase, a3=phrase))
         output = cursor.fetchall()
         cursor.close()
         return render(request, "tasks_vehicles.html", {"ZadaniaPojazdy": output})
 
-    query = """SELECT zp.*, z.nazwa AS zadanie, p.nazwa AS pojazd FROM zadania_pojazdy zp INNER JOIN zadania z on zp.id_zadania = z.id_zadania INNER JOIN pojazdy p on zp.id_pojazdu = p.id_pojazdu;"""
+    query = """SELECT zp.*, z.nazwa AS zadanie, p.nazwa AS pojazd FROM zadania_pojazdy zp INNER JOIN zadania z on zp.id_zadania = z.id_zadania INNER JOIN pojazdy p on zp.id_pojazdu = p.id_pojazdu ORDER BY z.nazwa;"""
     cursor = connections["default"].cursor()
     cursor.execute(query)
     output = cursor.fetchall()
@@ -1127,8 +1151,8 @@ def tasksVehiclesNew(request):
         cursor.execute(query)
         cursor.close()
 
-    zadania = Zadania.objects.raw("SELECT * FROM zadania")
-    pojazdy = Pojazdy.objects.raw("SELECT * FROM pojazdy")
+    zadania = Zadania.objects.raw("SELECT * FROM zadania ORDER BY nazwa")
+    pojazdy = Pojazdy.objects.raw("SELECT * FROM pojazdy ORDER BY nazwa")
 
     return render(
         request,
@@ -1165,8 +1189,8 @@ def tasksVehiclesEdit(request, id):
             transaction.set_autocommit(True)
             cursor.close()
 
-    zadania = Zadania.objects.raw("SELECT * FROM zadania")
-    pojazdy = Pojazdy.objects.raw("SELECT * FROM pojazdy")
+    zadania = Zadania.objects.raw("SELECT * FROM zadania ORDER BY nazwa")
+    pojazdy = Pojazdy.objects.raw("SELECT * FROM pojazdy ORDER BY nazwa")
 
     return render(
         request,
@@ -1193,14 +1217,14 @@ def researchesVehicles(request):
 
     if request.method == "GET" and "search" in request.GET:
         phrase = request.GET["search"].upper()
-        query = """SELECT bp.*, b.nazwa AS badanie, p.nazwa AS pojazd FROM badania_pojazdy bp INNER JOIN badania b on bp.id_badania = b.id_badania INNER JOIN pojazdy p on bp.id_pojazdu = p.id_pojazdu WHERE UPPER(p.nazwa) like '%%{a1}%%' OR UPPER(b.nazwa) like '%%{a2}%%' OR UPPER(p.id_pojazdu) like '%%{a3}%%';"""
+        query = """SELECT bp.*, b.nazwa AS badanie, p.nazwa AS pojazd FROM badania_pojazdy bp INNER JOIN badania b on bp.id_badania = b.id_badania INNER JOIN pojazdy p on bp.id_pojazdu = p.id_pojazdu WHERE UPPER(p.nazwa) like '%%{a1}%%' OR UPPER(b.nazwa) like '%%{a2}%%' OR UPPER(p.id_pojazdu) like '%%{a3}%%' ORDER BY b.nazwa;"""
         cursor = connections["default"].cursor()
         cursor.execute(query.format(a1=phrase, a2=phrase, a3=phrase))
         output = cursor.fetchall()
         cursor.close()
         return render(request, "researches_vehicles.html", {"BadaniaPojazdy": output})
 
-    query = """SELECT bp.*, b.nazwa AS badanie, p.nazwa AS pojazd FROM badania_pojazdy bp INNER JOIN badania b on bp.id_badania = b.id_badania INNER JOIN pojazdy p on bp.id_pojazdu = p.id_pojazdu;"""
+    query = """SELECT bp.*, b.nazwa AS badanie, p.nazwa AS pojazd FROM badania_pojazdy bp INNER JOIN badania b on bp.id_badania = b.id_badania INNER JOIN pojazdy p on bp.id_pojazdu = p.id_pojazdu ORDER BY b.nazwa;"""
     cursor = connections["default"].cursor()
     cursor.execute(query)
     output = cursor.fetchall()
@@ -1219,8 +1243,8 @@ def researchesVehiclesNew(request):
         cursor.execute(query)
         cursor.close()
 
-    badania = Badania.objects.raw("SELECT * FROM badania")
-    pojazdy = Pojazdy.objects.raw("SELECT * FROM pojazdy")
+    badania = Badania.objects.raw("SELECT * FROM badania ORDER BY nazwa")
+    pojazdy = Pojazdy.objects.raw("SELECT * FROM pojazdy ORDER BY nazwa")
 
     return render(
         request,
@@ -1257,8 +1281,8 @@ def researchesVehiclesEdit(request, id):
             transaction.set_autocommit(True)
             cursor.close()
 
-    badania = Badania.objects.raw("SELECT * FROM badania")
-    pojazdy = Pojazdy.objects.raw("SELECT * FROM pojazdy")
+    badania = Badania.objects.raw("SELECT * FROM badania ORDER BY nazwa")
+    pojazdy = Pojazdy.objects.raw("SELECT * FROM pojazdy ORDER BY nazwa")
 
     return render(
         request,
@@ -1285,14 +1309,14 @@ def researchesEvents(request):
 
     if request.method == "GET" and "search" in request.GET:
         phrase = request.GET["search"].upper()
-        query = """SELECT bw.*, b.nazwa AS badanie, w.nazwa AS wydarzenie FROM badania_wydarzenia bw INNER JOIN badania b on bw.id_badania = b.id_badania INNER JOIN wydarzenia w on bw.id_wydarzenia = w.id_wydarzenia WHERE UPPER(w.nazwa) like '%%{a1}%%' OR UPPER(b.nazwa) like '%%{a2}%%';"""
+        query = """SELECT bw.*, b.nazwa AS badanie, w.nazwa AS wydarzenie FROM badania_wydarzenia bw INNER JOIN badania b on bw.id_badania = b.id_badania INNER JOIN wydarzenia w on bw.id_wydarzenia = w.id_wydarzenia WHERE UPPER(w.nazwa) like '%%{a1}%%' OR UPPER(b.nazwa) like '%%{a2}%%' ORDER BY b.nazwa;"""
         cursor = connections["default"].cursor()
         cursor.execute(query.format(a1=phrase, a2=phrase))
         output = cursor.fetchall()
         cursor.close()
         return render(request, "researches_events.html", {"BadaniaWydarzenia": output})
 
-    query = """SELECT bw.*, b.nazwa AS badanie, w.nazwa AS wydarzenie FROM badania_wydarzenia bw INNER JOIN badania b on bw.id_badania = b.id_badania INNER JOIN wydarzenia w on bw.id_wydarzenia = w.id_wydarzenia;"""
+    query = """SELECT bw.*, b.nazwa AS badanie, w.nazwa AS wydarzenie FROM badania_wydarzenia bw INNER JOIN badania b on bw.id_badania = b.id_badania INNER JOIN wydarzenia w on bw.id_wydarzenia = w.id_wydarzenia ORDER BY b.nazwa;"""
     cursor = connections["default"].cursor()
     cursor.execute(query)
     output = cursor.fetchall()
@@ -1311,8 +1335,8 @@ def researchesEventsNew(request):
         cursor.execute(query)
         cursor.close()
 
-    badania = Badania.objects.raw("SELECT * FROM badania")
-    wydarzenia = Wydarzenia.objects.raw("SELECT * FROM wydarzenia")
+    badania = Badania.objects.raw("SELECT * FROM badania ORDER BY nazwa")
+    wydarzenia = Wydarzenia.objects.raw("SELECT * FROM wydarzenia ORDER BY nazwa")
 
     return render(
         request,
@@ -1349,8 +1373,8 @@ def researchesEventsEdit(request, id):
             transaction.set_autocommit(True)
             cursor.close()
 
-    badania = Badania.objects.raw("SELECT * FROM badania")
-    wydarzenia = Wydarzenia.objects.raw("SELECT * FROM wydarzenia")
+    badania = Badania.objects.raw("SELECT * FROM badania ORDER BY nazwa")
+    wydarzenia = Wydarzenia.objects.raw("SELECT * FROM wydarzenia ORDER BY nazwa")
 
     return render(
         request,
@@ -1377,14 +1401,14 @@ def tasksEvents(request):
 
     if request.method == "GET" and "search" in request.GET:
         phrase = request.GET["search"].upper()
-        query = """SELECT zw.*, z.nazwa AS zadanie, w.nazwa AS wydarzenie FROM wydarzenia_zadania zw INNER JOIN zadania z on zw.id_zadania = z.id_zadania INNER JOIN wydarzenia w on zw.id_wydarzenia = w.id_wydarzenia WHERE UPPER(w.nazwa) like '%%{a1}%%' OR UPPER(z.nazwa) like '%%{a2}%%';"""
+        query = """SELECT zw.*, z.nazwa AS zadanie, w.nazwa AS wydarzenie FROM wydarzenia_zadania zw INNER JOIN zadania z on zw.id_zadania = z.id_zadania INNER JOIN wydarzenia w on zw.id_wydarzenia = w.id_wydarzenia WHERE UPPER(w.nazwa) like '%%{a1}%%' OR UPPER(z.nazwa) like '%%{a2}%%' ORDER BY z.nazwa;"""
         cursor = connections["default"].cursor()
         cursor.execute(query.format(a1=phrase, a2=phrase))
         output = cursor.fetchall()
         cursor.close()
         return render(request, "tasks_events.html", {"ZadaniaWydarzenia": output})
 
-    query = """SELECT zw.*, z.nazwa AS zadanie, w.nazwa AS wydarzenie FROM wydarzenia_zadania zw INNER JOIN zadania z on zw.id_zadania = z.id_zadania INNER JOIN wydarzenia w on zw.id_wydarzenia = w.id_wydarzenia;"""
+    query = """SELECT zw.*, z.nazwa AS zadanie, w.nazwa AS wydarzenie FROM wydarzenia_zadania zw INNER JOIN zadania z on zw.id_zadania = z.id_zadania INNER JOIN wydarzenia w on zw.id_wydarzenia = w.id_wydarzenia ORDER BY z.nazwa;"""
     cursor = connections["default"].cursor()
     cursor.execute(query)
     output = cursor.fetchall()
@@ -1403,8 +1427,8 @@ def tasksEventsNew(request):
         cursor.execute(query)
         cursor.close()
 
-    zadania = Zadania.objects.raw("SELECT * FROM zadania")
-    wydarzenia = Wydarzenia.objects.raw("SELECT * FROM wydarzenia")
+    zadania = Zadania.objects.raw("SELECT * FROM zadania ORDER BY nazwa")
+    wydarzenia = Wydarzenia.objects.raw("SELECT * FROM wydarzenia ORDER BY nazwa")
 
     return render(
         request,
@@ -1441,8 +1465,8 @@ def tasksEventsEdit(request, id):
             transaction.set_autocommit(True)
             cursor.close()
 
-    zadania = Zadania.objects.raw("SELECT * FROM zadania")
-    wydarzenia = Wydarzenia.objects.raw("SELECT * FROM wydarzenia")
+    zadania = Zadania.objects.raw("SELECT * FROM zadania ORDER BY nazwa")
+    wydarzenia = Wydarzenia.objects.raw("SELECT * FROM wydarzenia ORDER BY nazwa")
 
     return render(
         request,

@@ -1,6 +1,8 @@
 function capitalize(s)
-{
-    return s[0].toUpperCase() + s.slice(1).toLowerCase();
+{   
+    let str = s.trim()
+    let ret = str[0].toUpperCase() + str.slice(1).toLowerCase();
+    return ret;
 }
 
 function checkNumber(input, input_name, min_len, max_len) {

@@ -13,7 +13,9 @@
     {% compress css %}
     <link rel="stylesheet" href="{% static 'src/output.css' %}">
     {% endcompress %}
-
+    <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script> -->
+    <!-- <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script> -->
 </head>
 
 <body class="bg-main-dark flex flex-row h-full w-full">
@@ -48,12 +50,15 @@
                         <li>
                            <a href="{% url 'people_research' %}" class="flex items-center p-2 pl-11 w-full text-base font-normal rounded-lg transition duration-75 group font-font-1 text-white hover:bg-gray-700">Badania + Kolonizatorzy</a>
                         </li>
+                         <li>
+                            <a href="{% url 'researches_vehicles' %}" class="flex items-center p-2 pl-11 w-full text-base font-normal rounded-lg transition duration-75 group font-font-1 text-white hover:bg-gray-700">Badania + Pojazdy</a>
+                         </li> 
                         <li>
                            <a href="{% url 'researches_rooms' %}" class="flex items-center p-2 pl-11 w-full text-base font-normal rounded-lg transition duration-75 group font-font-1 text-white hover:bg-gray-700">Badania + Pomieszczenia</a>
                         </li>
                         <li>
-                           <a href="{% url 'researches_vehicles' %}" class="flex items-center p-2 pl-11 w-full text-base font-normal rounded-lg transition duration-75 group font-font-1 text-white hover:bg-gray-700">Badania + Pojazdy</a>
-                        </li> 
+                            <a href="{% url 'researches_events' %}" class="flex items-center p-2 pl-11 w-full text-base font-normal rounded-lg transition duration-75 group font-font-1 text-white hover:bg-gray-700">Badania + Wydarzenia</a>
+                         </li>
                   </ul>
                </li> 
 
@@ -73,11 +78,55 @@
                        <li>
                             <a href="{% url 'exp' %}" class="flex items-center p-2 pl-11 w-full text-base font-normal rounded-lg transition duration-75 group font-font-1 text-white hover:bg-gray-700">Doświadczenia zawodowe</a>
                         </li>
-                       <!--  <li>
-                            <a href="#" class="flex items-center p-2 pl-11 w-full text-base font-normal rounded-lg transition duration-75 group font-font-1 text-white hover:bg-gray-700">Specjalizacje</a>
-                        </li>-->
+                        <li>
+                            <a href="{% url 'people_research' %}" class="flex items-center p-2 pl-11 w-full text-base font-normal rounded-lg transition duration-75 group font-font-1 text-white hover:bg-gray-700">Kolonizatorzy + badania</a>
+                        </li>
+                        <li>
+                            <a href="{% url 'people_tasks' %}" class="flex items-center p-2 pl-11 w-full text-base font-normal rounded-lg transition duration-75 group font-font-1 text-white hover:bg-gray-700">Kolonizatorzy + zadania</a>
+                        </li>
                     </ul>
                 </li> 
+
+                <li>
+                    <button type="button" class="flex items-center p-2 w-full text-base font-normal rounded-lg transition duration-75 group text-white hover:bg-gray-700" aria-controls="dropdown-3" data-collapse-toggle="dropdown-3">
+                        <img class="w-7 h-7 transition duration-75 text-gray-400 group-hover:text-white" src="{% static 'images/pojazdy.svg' %}" alt="pic">
+                        <span class="flex-1 ml-3 text-left whitespace-nowrap font-font-1" sidebar-toggle-item>Pojazdy</span>
+                        <svg sidebar-toggle-item class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
+                    </button>
+                    <ul id="dropdown-3" class="hidden py-2 space-y-2">
+                        <li>
+                            <a href="{% url 'vehicle' %}" class="flex items-center p-2 pl-11 w-full text-base font-normal rounded-lg transition duration-75 group font-font-1 text-white hover:bg-gray-700">Pojazdy</a>
+                        </li>
+                        <li>
+                            <a href="{% url 'researches_vehicles' %}" class="flex items-center p-2 pl-11 w-full text-base font-normal rounded-lg transition duration-75 group font-font-1 text-white hover:bg-gray-700">Pojazdy + Badania</a>
+                        </li>
+                        <li>
+                            <a href="{% url 'tasks_vehicles' %}" class="flex items-center p-2 pl-11 w-full text-base font-normal rounded-lg transition duration-75 group font-font-1 text-white hover:bg-gray-700">Pojazdy + Zadania</a>
+                        </li>
+                    </ul>
+                </li>
+
+                <li>
+                    <button type="button" class="flex items-center p-2 w-full text-base font-normal rounded-lg transition duration-75 group text-white hover:bg-gray-700" aria-controls="dropdown-7" data-collapse-toggle="dropdown-7">
+                        <img class="w-7 h-7 transition duration-75 text-gray-400 group-hover:text-white" src="{% static 'images/pomieszczenia.svg' %}" alt="pic">
+                        <span class="flex-1 ml-3 text-left whitespace-nowrap font-font-1" sidebar-toggle-item>Pomieszczenia</span>
+                        <svg sidebar-toggle-item class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
+                    </button>
+                    <ul id="dropdown-7" class="hidden py-2 space-y-2">
+                        <li>
+                            <a href="{% url 'rooms' %}" class="flex items-center p-2 pl-11 w-full text-base font-normal rounded-lg transition duration-75 group font-font-1 text-white hover:bg-gray-700">Pomieszczenia</a>
+                        </li>
+                        <li>
+                            <a href="{% url 'room_sys' %}" class="flex items-center p-2 pl-11 w-full text-base font-normal rounded-lg transition duration-75 group font-font-1 text-white hover:bg-gray-700">Pomieszczenia + Systemy</a>
+                        </li>
+                        <li>
+                            <a href="{% url 'room_res' %}" class="flex items-center p-2 pl-11 w-full text-base font-normal rounded-lg transition duration-75 group font-font-1 text-white hover:bg-gray-700">Pomieszczenia + Zasoby</a>
+                        </li>
+                        <li>
+                            <a href="{% url 'systems' %}" class="flex items-center p-2 pl-11 w-full text-base font-normal rounded-lg transition duration-75 group font-font-1 text-white hover:bg-gray-700">Systemy</a>
+                        </li>
+                    </ul>
+                </li>
 
                 <li>
                     <button type="button" class="flex items-center p-2 w-full text-base font-normal rounded-lg transition duration-75 group text-white hover:bg-gray-700" aria-controls="dropdown-6" data-collapse-toggle="dropdown-6">
@@ -95,18 +144,33 @@
                           <li>
                              <a href="{% url 'tasks_events' %}" class="flex items-center p-2 pl-11 w-full text-base font-normal rounded-lg transition duration-75 group font-font-1 text-white hover:bg-gray-700">Wydarzenie + Zadania</a>
                           </li>
-                          <!--<li>
-                             <a href="#" class="flex items-center p-2 pl-11 w-full text-base font-normal rounded-lg transition duration-75 group font-font-1 text-white hover:bg-gray-700">Wydarzenia</a>
-                          </li> -->
                     </ul>
                  </li> 
 
                 <li>
-                    <a href="{% url 'vehicle' %}" class="flex items-center p-2 text-base font-normal rounded-lg text-white hover:bg-gray-700">
-                        <img class="w-7 h-7 transition duration-75 text-gray-400 group-hover:text-white" src="{% static 'images/pojazdy.svg' %}" alt="pic">
-                       <span class="ml-3 font-font-1">Pojazdy</span>
-                    </a>
-                </li> 
+                    <button type="button" class="flex items-center p-2 w-full text-base font-normal rounded-lg transition duration-75 group text-white hover:bg-gray-700" aria-controls="dropdown-4" data-collapse-toggle="dropdown-4">
+                        <img class="w-7 h-7 transition duration-75 text-gray-400 group-hover:text-white" src="{% static 'images/zadania.svg' %}" alt="pic">
+                        <span class="flex-1 ml-3 text-left whitespace-nowrap font-font-1" sidebar-toggle-item>Zadania</span>
+                        <svg sidebar-toggle-item class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
+                    </button>
+                    <ul id="dropdown-4" class="hidden py-2 space-y-2">
+                          <li>
+                            <a href="{% url 'tasks' %}" class="flex items-center p-2 pl-11 w-full text-base font-normal rounded-lg transition duration-75 group font-font-1 text-white hover:bg-gray-700">Zadania</a>
+                          </li>
+                          <li>
+                             <a href="{% url 'people_tasks' %}" class="flex items-center p-2 pl-11 w-full text-base font-normal rounded-lg transition duration-75 group font-font-1 text-white hover:bg-gray-700">Zadania + Kolonizatorzy</a>
+                          </li>
+                          <li>
+                            <a href="{% url 'tasks_vehicles' %}" class="flex items-center p-2 pl-11 w-full text-base font-normal rounded-lg transition duration-75 group font-font-1 text-white hover:bg-gray-700">Zadanie + Pojazdy</a>
+                         </li> 
+                           <li>
+                            <a href="{% url 'tasks_rooms' %}" class="flex items-center p-2 pl-11 w-full text-base font-normal rounded-lg transition duration-75 group font-font-1 text-white hover:bg-gray-700">Zadania + Pomieszczenia</a>
+                         </li>
+                         <li>
+                            <a href="{% url 'tasks_events' %}" class="flex items-center p-2 pl-11 w-full text-base font-normal rounded-lg transition duration-75 group font-font-1 text-white hover:bg-gray-700">Zadania + Wydarzenia</a>
+                         </li>
+                    </ul>
+                </li>
 
                 <li>
                     <button type="button" class="flex items-center p-2 w-full text-base font-normal rounded-lg transition duration-75 group text-white hover:bg-gray-700" aria-controls="dropdown-5" data-collapse-toggle="dropdown-5">
@@ -123,60 +187,8 @@
                         </li>
                     </ul>
                 </li>
-
-                <li>
-                    <a href="{% url 'rooms' %}" class="flex items-center p-2 text-base font-normal rounded-lg text-white hover:bg-gray-700">
-                        <img class="w-7 h-7 transition duration-75 text-gray-400 group-hover:text-white" src="{% static 'images/pomieszczenia.svg' %}" alt="pic">
-                       <span class="ml-3 font-font-1">Pomieszczenia</span>
-                    </a>
-                </li> 
-
-                <li>
-                    <button type="button" class="flex items-center p-2 w-full text-base font-normal rounded-lg transition duration-75 group text-white hover:bg-gray-700" aria-controls="dropdown-3" data-collapse-toggle="dropdown-3">
-                        <img class="w-7 h-7 transition duration-75 text-gray-400 group-hover:text-white" src="{% static 'images/systemy.svg' %}" alt="pic">
-                        <span class="flex-1 ml-3 text-left whitespace-nowrap font-font-1" sidebar-toggle-item>Systemy</span>
-                        <svg sidebar-toggle-item class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
-                    </button>
-                    <ul id="dropdown-3" class="hidden py-2 space-y-2">
-                        <li>
-                            <a href="{% url 'systems' %}" class="flex items-center p-2 pl-11 w-full text-base font-normal rounded-lg transition duration-75 group font-font-1 text-white hover:bg-gray-700">Systemy</a>
-                        </li>
-                        <li>
-                            <a href="{% url 'room_sys' %}" class="flex items-center p-2 pl-11 w-full text-base font-normal rounded-lg transition duration-75 group font-font-1 text-white hover:bg-gray-700">Systemy + Pomieszczenia</a>
-                        </li>
-                    </ul>
-                </li>
-
-                <li>
-                    <button type="button" class="flex items-center p-2 w-full text-base font-normal rounded-lg transition duration-75 group text-white hover:bg-gray-700" aria-controls="dropdown-4" data-collapse-toggle="dropdown-4">
-                        <img class="w-7 h-7 transition duration-75 text-gray-400 group-hover:text-white" src="{% static 'images/zadania.svg' %}" alt="pic">
-                        <span class="flex-1 ml-3 text-left whitespace-nowrap font-font-1" sidebar-toggle-item>Zadania</span>
-                        <svg sidebar-toggle-item class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
-                    </button>
-                    <ul id="dropdown-4" class="hidden py-2 space-y-2">
-                          <li>
-                            <a href="{% url 'tasks' %}" class="flex items-center p-2 pl-11 w-full text-base font-normal rounded-lg transition duration-75 group font-font-1 text-white hover:bg-gray-700">Zadania</a>
-                          </li>
-                          <li>
-                             <a href="{% url 'people_tasks' %}" class="flex items-center p-2 pl-11 w-full text-base font-normal rounded-lg transition duration-75 group font-font-1 text-white hover:bg-gray-700">Zadania + Kolonizatorzy</a>
-                          </li>
-                           <li>
-                            <a href="{% url 'tasks_rooms' %}" class="flex items-center p-2 pl-11 w-full text-base font-normal rounded-lg transition duration-75 group font-font-1 text-white hover:bg-gray-700">Zadania + Pomieszczenia</a>
-                         </li>
-                        <li>
-                            <a href="{% url 'tasks_vehicles' %}" class="flex items-center p-2 pl-11 w-full text-base font-normal rounded-lg transition duration-75 group font-font-1 text-white hover:bg-gray-700">Zadanie + Pojazdy</a>
-                         </li> 
-                    </ul>
-                </li>
-
-              <!--  <li>
-                    <a href="#" class="flex items-center p-2 text-base font-normal rounded-lg text-white hover:bg-gray-700">
-                        <img class="w-7 h-7 transition duration-75 text-gray-400 group-hover:text-white" src="{% static 'images/Wydarzenia.svg' %}" alt="pic">
-                        <span class="ml-3 font-font-1">Wydarzenia</span>
-                    </a>
-                </li>
             </ul>
-         </div>-->
+         </div>
     </nav>
     <div class="w-full h-full flex flex-col"> 
         <!-- main -->

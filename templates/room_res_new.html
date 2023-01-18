@@ -13,7 +13,7 @@
         <div class="w-1/2">
             <div class="mb-6">
               <label for="email" class="block mb-2 text-lg font-semibold text-white/40">Zasób</label>
-              <select id="nazwa" type="text" class="overflow-y-scroll bg-white/10 border border-white/10 text-white text-sm rounded-lg focus:ring-blue-500/30 focus:border-blue-500/50 block w-full p-2.5" required>
+              <select id="nazwa" type="text" class="bg-white/10 border border-white/10 text-white text-sm rounded-lg focus:ring-blue-500/30 focus:border-blue-500/50 block w-full p-2.5" required>
                 {% for z in Zasoby %}
                 <option class="bg-main-dark text-white" value="{{z.nazwa}}">{{z.nazwa}}</option>
                 {% endfor %}

@@ -11,24 +11,26 @@
     </div>
     <div class="p-10 font-font-1 w-full flex pl-28">
         <div class="w-1/2">
-            <div class="mb-6">
-              <label for="email" class="block mb-2 text-lg font-semibold text-white/40">Kolonizator</label>
-              <select id="id_osoby" type="text" class="bg-white/10 border border-white/10 text-white text-sm rounded-lg focus:ring-blue-500/30 focus:border-blue-500/50 block w-full p-2.5" required>
-                {% for k in Kolonizatorzy %}
-                <option class="bg-main-dark text-white" value="{{k.id_osoby}}" {% if k.id_osoby == id_kolonizatora %}selected{% endif %}>{{k.id_osoby}} - {{k.imie}} - {{k.nazwisko}}</option>
-                {% endfor %}
-              </select>
-            </div>
-            <div class="mb-6">
-                <label for="email" class="block mb-2 text-lg font-semibold text-white/40">Badanie</label>
-                <select id="id_badania" type="text" class="bg-white/10 border border-white/10 text-white text-sm rounded-lg focus:ring-blue-500/30 focus:border-blue-500/50 block w-full p-2.5" required>
-                    {% for b in Badania %}
-                    <option class="bg-main-dark text-white" value="{{b.id_badania}}" {% if b.id_badania == id_badania %}selected{% endif %}>{{b.nazwa}}</option>
+            <div id="form-box">
+                <div class="mb-6">
+                <label for="email" class="block mb-2 text-lg font-semibold text-white/40">Kolonizator</label>
+                <select id="id_osoby" type="text" class="bg-white/10 border border-white/10 text-white text-sm rounded-lg focus:ring-blue-500/30 focus:border-blue-500/50 block w-full p-2.5"required>
+                    {% for k in Kolonizatorzy %}
+                    <option class="bg-main-dark text-white" value="{{k.id_osoby}}" {% if k.id_osoby == id_kolonizatora %}selected{% endif %}>{{k.id_osoby}} - {{k.imie}} - {{k.nazwisko}}</option>
                     {% endfor %}
                 </select>
+                </div>
+                <div class="mb-6">
+                    <label for="email" class="block mb-2 text-lg font-semibold text-white/40">Badanie</label>
+                    <select id="id_badania" type="text" class="bg-white/10 border border-white/10 text-white text-sm rounded-lg focus:ring-blue-500/30 focus:border-blue-500/50 block w-full p-2.5" required>
+                        {% for b in Badania %}
+                        <option class="bg-main-dark text-white" value="{{b.id_badania}}" {% if b.id_badania == id_badania %}selected{% endif %}>{{b.nazwa}}</option>
+                        {% endfor %}
+                    </select>
+                </div>
             </div>
             <div class="flex flex-row justify-between w-1/4">
-                <button id="submitbutton" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-1 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center">Zapisz</button>
+                <button id="submitbutton" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-1 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center" disabled>Zapisz</button>
                 <button onclick="window.location=document.referrer" class="ml-4 text-white bg-red-700 hover:bg-red-800 focus:ring-1 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center">Anuluj</button>
             </div>
         </div>
@@ -37,6 +39,9 @@
     <script type="text/javascript"> window.CSRF_TOKEN = "{{ csrf_token }}"; </script>
     <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script type="text/javascript">
+    document.getElementById('form-box').addEventListener('change', function(event){
+        document.getElementById('submitbutton').disabled = false;
+    });
     $('#submitbutton').click(function(){
         let id_osoby = document.getElementById("id_osoby").value;
         let id_badania = document.getElementById("id_badania").value;
