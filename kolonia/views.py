@@ -19,8 +19,18 @@ from .models import (
     ZadaniaPomieszczenia,
 )
 
-# Create your views here.
+
 def dashboard(request):
+    if request.method == "GET":
+        if "level" in request.GET:
+            level = int(request.GET["level"])
+            if level > 10:
+                level = 10
+            elif level < 0:
+                level = 0
+        else:
+            level = 5
+
     if request.method == "POST":
         pomieszczenie = request.POST["pomieszczenie"]
         liczba = request.POST["liczba"]
@@ -37,7 +47,7 @@ def dashboard(request):
     pomieszczenia = Pomieszczenia.objects.count()
     pomieszczeniaAll = Pomieszczenia.objects.raw("SELECT * FROM pomieszczenia")
     cursor = connections["default"].cursor()
-    niebezp = cursor.callfunc("PoliczNiebezpieczne", int, [5])
+    niebezp = cursor.callfunc("PoliczNiebezpieczne", int, [level])
     cursor.execute("SELECT count(id_osoby) FROM kolonizatorzy WHERE typ = 'Badawczy';")
     kolonizatorzy_badawczy = cursor.fetchone()
     cursor.execute(
@@ -59,6 +69,7 @@ def dashboard(request):
             "Pomieszczenia": pomieszczeniaAll,
             "Badawczy": kolonizatorzy_badawczy,
             "Wydarzenia": najwazniejsze_wydarzenia,
+            "Poziom": level,
         },
     )
 

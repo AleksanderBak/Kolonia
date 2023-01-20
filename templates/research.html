@@ -31,7 +31,7 @@
         </div>
         </form>
         <div class="relative overflow-x-auto w-full overflow-y-scroll h-[40em]">
-            <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400 break-all">
+            <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400 break-words">
                 <colgroup>
                     <col span="1" style="width: 20%;">
                     <col span="1" style="width: 40%;">
@@ -57,13 +57,13 @@
                 <tbody>
                     {% for b in Badania %}
                     <tr class="bg-main-dark border-b border-white/20 text-white">
-                        <th scope="row" class="px-6 py-4 font-medium whitespace-wrap break-all">
+                        <th scope="row" class="px-6 py-4 font-medium whitespace-wrap break-words">
                             {{b.nazwa}}
                         </th>
-                        <th scope="row" class="px-6 py-4 font-medium whitespace-wrap break-all">
+                        <th scope="row" class="px-6 py-4 font-medium whitespace-wrap break-words">
                             {{b.opis}}
                         </th>
-                        <td class="px-6 py-4 whitespace-wrap break-all">
+                        <td class="px-6 py-4 whitespace-wrap break-words">
                             {{b.data_wykonywania}}
                         </td>
                         <td class="px-6 py-4">

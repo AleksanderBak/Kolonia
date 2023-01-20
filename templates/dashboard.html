@@ -12,14 +12,20 @@
         </div>
         <div class="p-12 h-full">
             <div class="flex flex-row justify-between">
-                <div class="w-1/5 h-32 bg-dashboard-1 flex flex-col rounded-2xl">
-                    <div>
-                        <p class="text-xl font-semibold mx-4 mt-4">Liczba nadchodzących <br> niebezpieczeństw</p>
+                <div class="w-1/3 h-32 bg-dashboard-1 flex flex-col rounded-2xl">
+                    <div class="flex flex-row">
+                        <div class="w-3/4">
+                            <p class="text-l font-semibold mx-4 mt-4 underline">Sprawdź liczbę wydarzeń o poziomie zagrożenia wyższym lub równym:</p>
+                            <p class="text-2xl ml-4 mt-4 font-semibold">Liczba niebezpieczeństw: {{Niebezp}}</p>
+                        </div>
+                        <div class="w-1/4 mr-4 flex flex-col justify-center">
+                            <form method="get" class="flex flex-col justify-center">
+                                <input name="level" class="text-xl mt-5 w-full bg-white border border-black text-red-500 rounded-lg focus:ring-blue-500/30 focus:border-blue-500/50 block p-1.5" type="number" value="{{Poziom}}">
+                                <button type="submit" class="mx-4 mt-4 text-white bg-purple-700 hover:bg-purple-800 focus:ring-1 focus:outline-none focus:ring-purple-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center blck">Sprawdź</button>
+                            </form>
+                        </div>
                     </div>
-                    <div>
-                        <p class="text-3xl ml-5 mt-2 font-semibold">{{Niebezp}}</p>
-                    </div>
-                </div>
+                </div> 
                 <div class="w-1/5 h-32 bg-dashboard-2 flex flex-col rounded-2xl">
                     <div>
                         <p class="text-xl font-semibold mx-4 mt-4">Liczba dostępnych <br> pojazdów</p>
