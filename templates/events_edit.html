@@ -42,6 +42,9 @@
                 <select id="typ" type="text" class="bg-white/10 border border-white/10 text-white text-sm rounded-lg focus:ring-blue-500/30 focus:border-blue-500/50 block w-full p-2.5" required>
                     <option value="Neutralne" class="bg-main-dark text-white" {% if Wydarzenie.typ == "Neutralne" %} selected {% endif %}>Neutralne</option>
                     <option value="Awaria" class="bg-main-dark text-white" {% if Wydarzenie.typ == "Awaria" %} selected {% endif %}>Awaria</option>
+                    <option value="Awaria" class="bg-main-dark text-white" {% if Wydarzenie.typ == "Uroczystość" %} selected {% endif %}>Uroczystość</option>
+                    <option value="Awaria" class="bg-main-dark text-white" {% if Wydarzenie.typ == "Ćwiczenia" %} selected {% endif %}>Ćwiczenia</option>
+                    <option value="Awaria" class="bg-main-dark text-white" {% if Wydarzenie.typ == "Inne" %} selected {% endif %}>Inne</option>
                 </select>
               </div>
             </div>
