@@ -114,7 +114,7 @@
                     location.reload();
                 },
                 error: function() {
-                    Swal.fire('Błąd', 'Nie można usunąć kolonizatora ze względu na istniejące powiązania w innych tabelach', 'error');
+                    Swal.fire('Błąd', 'Nie można usunąć kolonizatora ze względu na istniejące zależności w innych tabelach.', 'error');
                 }
             })
             } else if (result.isDenied) {

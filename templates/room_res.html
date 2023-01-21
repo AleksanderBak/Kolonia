@@ -96,7 +96,7 @@
         Swal.fire({
             title: 'Jesteś pewny?',
             color: 'black',
-            text: 'Czy na pewno chcesz usunąć ten zasób?',
+            text: 'Czy na pewno chcesz usunąć to przypisanie',
             icon: 'question',
             showDenyButton: true,
             confirmButtonText: 'Usuń',
@@ -117,7 +117,7 @@
                     location.reload();
                 },
                 error: function() {
-                    Swal.fire('Nie można usunąć danej zawartości', '', 'error')
+                    Swal.fire('Wystąpił błąd podczas usuwania przypisania.', '', 'error')
                 }
             })
             } else if (result.isDenied) {

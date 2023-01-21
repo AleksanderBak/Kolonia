@@ -96,7 +96,7 @@
         Swal.fire({
             title: 'Jesteś pewny?',
             color: 'black',
-            text: 'Czy na pewno chcesz usunąć to powiązanie?',
+            text: 'Czy na pewno chcesz usunąć to przypisanie?',
             icon: 'question',
             showDenyButton: true,
             confirmButtonText: 'Usuń',
@@ -117,7 +117,7 @@
                     location.reload();
                 },
                 error: function() {
-                    Swal.fire('Wystąpił błąd podczas usuwania powiązania', '', 'error');
+                    Swal.fire('Wystąpił błąd podczas usuwania przypisania.', '', 'error');
                 }
             })
             } else if (result.isDenied) {

@@ -59,7 +59,7 @@
             success: function() {
                 Swal.fire({
                     title: 'Sukces!',
-                    text: 'Dodano pojazd dla badania',
+                    text: 'Przypisano pojazd do badania.',
                     icon: 'success',
                     confirmButtonColor: '#3EB489',
                     confirmButtonText: 'Kontynuuj'
@@ -70,7 +70,7 @@
                 });
             },
             error: function () {
-                Swal.fire('Ten pojazd jest już przypisany do tego badania', '', 'error')
+                Swal.fire('Ten pojazd jest już przypisany do tego badania.', '', 'error')
             }
             })
         }

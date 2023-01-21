@@ -20,7 +20,7 @@
                         </div>
                         <div class="w-1/4 mr-4 flex flex-col justify-center">
                             <form method="get" class="flex flex-col justify-center">
-                                <input name="level" class="text-xl mt-5 w-full bg-white border border-black text-red-500 rounded-lg focus:ring-blue-500/30 focus:border-blue-500/50 block p-1.5" type="number" value="{{Poziom}}">
+                                <input name="level" class="text-xl mt-5 w-full font-bold bg-white border border-black text-red-500 rounded-lg focus:ring-blue-500/30 focus:border-blue-500/50 block p-1.5" type="number" value="{{Poziom}}">
                                 <button type="submit" class="mx-4 mt-4 text-white bg-purple-700 hover:bg-purple-800 focus:ring-1 focus:outline-none focus:ring-purple-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center blck">Sprawdź</button>
                             </form>
                         </div>
@@ -194,7 +194,7 @@
                     });
                 },
                 error: function () {
-                    Swal.fire('Wystąpił błąd w trakcie dodawania zasobu', '', 'error')
+                    Swal.fire('Podany zasób isnieje już w tym pomieszczeniu', '', 'error')
                 }
                 })
             }

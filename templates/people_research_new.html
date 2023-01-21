@@ -59,7 +59,7 @@
             success: function() {
                 Swal.fire({
                     title: 'Sukces!',
-                    text: 'Dodano badanie dla pracownika',
+                    text: 'Przypisano badanie do kolonizatora.',
                     icon: 'success',
                     confirmButtonColor: '#3EB489',
                     confirmButtonText: 'Kontynuuj'
@@ -70,7 +70,7 @@
                 });
             },
             error: function () {
-                Swal.fire('To badanie jest już przypisane do tego kolonizatora', '', 'error')
+                Swal.fire('To badanie jest już przypisane do tego kolonizatora.', '', 'error')
             }
             })
         }

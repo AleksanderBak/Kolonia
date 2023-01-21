@@ -30,6 +30,8 @@ def dashboard(request):
                 level = 0
         else:
             level = 5
+    else:
+        level = 5
 
     if request.method == "POST":
         pomieszczenie = request.POST["pomieszczenie"]

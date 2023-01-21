@@ -87,7 +87,7 @@
         Swal.fire({
             title: 'Jesteś pewny?',
             color: 'black',
-            text: 'Czy na pewno chcesz usunąć to pomieszczenie?',
+            text: 'Czy na pewno chcesz usunąć to badanie?',
             icon: 'question',
             showDenyButton: true,
             confirmButtonText: 'Usuń',
@@ -107,7 +107,7 @@
                     location.reload();
                 },
                 error: function() {
-                    Swal.fire('Błąd', 'Nie można usunąć rekordu ze względu na istniejące powiązania w innych tabelach', 'error');
+                    Swal.fire('Błąd', 'Nie można usunąć badania ze względu na istniejące zależności w innych tabelach.', 'error');
                 }
             })
             } else if (result.isDenied) {

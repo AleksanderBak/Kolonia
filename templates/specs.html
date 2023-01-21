@@ -80,7 +80,7 @@
         Swal.fire({
             title: 'Jesteś pewny?',
             color: 'black',
-            text: 'Czy na pewno chcesz usunąć ten system?',
+            text: 'Czy na pewno chcesz usunąć tę specjalizację?',
             icon: 'question',
             showDenyButton: true,
             confirmButtonText: 'Usuń',
@@ -100,7 +100,7 @@
                     location.reload();
                 },
                 error: function() {
-                    Swal.fire('Błąd', 'Nie można usunąć systemu ze względu na istniejące powiązania w innych tabelach', 'error');
+                    Swal.fire('Błąd', 'Nie można usunąć specjalizacji ze względu na istniejące zależności w innych tabelach', 'error');
                 }
             })
             } else if (result.isDenied) {

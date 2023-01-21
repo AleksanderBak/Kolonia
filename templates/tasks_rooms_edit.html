@@ -64,7 +64,7 @@
             success: function() {
                 Swal.fire({
                     title: 'Sukces!',
-                    text: 'Zedytowano powiązanie zadania i pomieszczenia',
+                    text: 'Zedytowano przypisanie zadania do pomieszczenia.',
                     icon: 'success',
                     confirmButtonColor: '#3EB489',
                     confirmButtonText: 'Kontynuuj'
@@ -75,7 +75,7 @@
                 });
             },
             error: function () {
-                Swal.fire('To zadanie jest już przypisane do tego pomieszczenia', '', 'error')
+                Swal.fire('To zadanie jest już przypisane do tego pomieszczenia.', '', 'error')
             }
             })
         }

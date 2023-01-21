@@ -55,6 +55,8 @@
         if (id_os == "" || lata == "" || nazwa == "") {
             Swal.fire('Uzupełnij wszystkie pola formularza', '', 'info')
             empty = true;
+        } else {
+            nazwa = capitalize(nazwa)
         }
         let valid = true;
         valid = checkNumber(lata, "liczba lat", 1, 999);
@@ -72,7 +74,7 @@
                 success: function() {
                 Swal.fire({
                     title: 'Sukces!',
-                    text: 'Doświadczenie zawodowe zostało zedytowane',
+                    text: 'Przypisanie zostało zedytowane.',
                     icon: 'success',
                     confirmButtonColor: '#3EB489',
                     confirmButtonText: 'Kontynuuj'
@@ -83,7 +85,7 @@
                 });
                 },
                 error: function () {
-                    Swal.fire('Błąd', 'Podany kolonizator posiada już przypisane doświadczenie w tej specjalizacji lub istnieją zależności w innych tabelach', 'error')
+                    Swal.fire('Błąd', 'Podany kolonizator posiada już przypisane doświadczenie w tej specjalizacji.', 'error')
                 }
             }) 
         }
