@@ -55,8 +55,8 @@
     <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script type="text/javascript">
     $('#submitbutton').click(function(){
-        let nazwa = document.getElementById("nazwa").value;
-        let opis = document.getElementById("opis").value;
+        let nazwa = document.getElementById("nazwa").value.trim();
+        let opis = document.getElementById("opis").value.trim();
         let potencjal = document.getElementById("potencjal").value;
         let zagrozenie = document.getElementById("zagrozenie").value;
         let rodzaj = document.getElementById("rodzaj").value;

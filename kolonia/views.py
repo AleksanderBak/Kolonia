@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from django.db import connections, transaction
+from datetime import datetime
 from .models import (
     Pomieszczenia,
     Zasoby,
@@ -23,7 +24,11 @@ from .models import (
 def dashboard(request):
     if request.method == "GET":
         if "level" in request.GET:
-            level = int(request.GET["level"])
+            level = request.GET["level"]
+            if level == "":
+                level = 0
+            else:
+                level = int(level)
             if level > 10:
                 level = 10
             elif level < 0:
@@ -43,8 +48,8 @@ def dashboard(request):
         cursor.close()
 
     pojazdy = Pojazdy.objects.count()
-    badania = Badania.objects.count()
-    zadania = Zadania.objects.count()
+    badania = Badania.objects.filter(data_wykonywania__gt=datetime.today()).count()
+    zadania = Zadania.objects.filter(data_wykonywania__gt=datetime.today()).count()
     kolonizatorzy = Kolonizatorzy.objects.count()
     pomieszczenia = Pomieszczenia.objects.count()
     pomieszczeniaAll = Pomieszczenia.objects.raw("SELECT * FROM pomieszczenia")
@@ -581,6 +586,15 @@ def peopleEdit(request, id):
         wiek = request.POST["wiek"]
         typ = request.POST["typ"]
         id = request.POST["id"]
+
+        if typ == "Zwykły":
+            block = KolonizatorzyBadania.objects.filter(id_osoby=id).count()
+        elif typ == "Badawczy":
+            block = KolonizatorzyZadania.objects.filter(id_osoby=id).count()
+
+        if block > 0:
+            raise KeyError
+
         Kolonizatorzy.objects.filter(id_osoby=id).update(
             imie=imie, nazwisko=nazwisko, wiek=wiek, typ=typ
         )

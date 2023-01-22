@@ -33,7 +33,7 @@
         document.getElementById('submitbutton').disabled = false;
     });
     $('#submitbutton').click(function(){
-        let nazwa = document.getElementById("nazwa").value;
+        let nazwa = document.getElementById("nazwa").value.trim();
         let empty = false;
         if (nazwa == "") {
             Swal.fire('Uzupełnij wszystkie pola formularza', '', 'info')
@@ -65,7 +65,7 @@
                 });
                 },
                 error: function () {
-                    Swal.fire('Błąd', 'Podana zasób już istnieje w bazie lub istnieją zależności w innych tabelach.', 'error')
+                    Swal.fire('Błąd', 'Podany zasób już istnieje w bazie lub istnieją zależności w innych tabelach.', 'error')
                 }
             }) 
         }

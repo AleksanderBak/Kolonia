@@ -41,8 +41,8 @@
     <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script type="text/javascript">
     $('#submitbutton').click(function(){
-        let imie = document.getElementById("imie").value;
-        let nazwisko = document.getElementById("nazwisko").value;
+        let imie = document.getElementById("imie").value.trim();
+        let nazwisko = document.getElementById("nazwisko").value.trim();
         let wiek = document.getElementById("wiek").value;
         let typ = document.getElementById("typ").value;
         let empty = false;

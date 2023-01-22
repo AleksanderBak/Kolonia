@@ -41,8 +41,8 @@
         document.getElementById('submitbutton').disabled = false;
     });
     $('#submitbutton').click(function(){
-        let nazwa = document.getElementById("nazwa").value;
-        let przeznaczenie = document.getElementById("przeznaczenie").value;
+        let nazwa = document.getElementById("nazwa").value.trim();
+        let przeznaczenie = document.getElementById("przeznaczenie").value.trim();
         let miejsca = document.getElementById("miejsca").value;
         let id = document.getElementById("id_pojazdu").value;
         let empty = false;

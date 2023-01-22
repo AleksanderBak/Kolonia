@@ -28,7 +28,7 @@
                 <input id="id_badania" type="hidden" value="{{Badanie.id_badania}}">
             </div>
             <div class="flex flex-row justify-between w-1/4">
-                <button id="submitbutton" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-1 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center" disabled>Dodaj</button>
+                <button id="submitbutton" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-1 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center" disabled>Zapisz</button>
                 <button onclick="window.location=document.referrer" class="ml-4 text-white bg-red-700 hover:bg-red-800 focus:ring-1 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center">Anuluj</button>
             </div>
         </div>
@@ -47,8 +47,13 @@
         let id = document.getElementById("id_badania").value;
         let empty = false;
         if (nazwa == "" || opis == "" || data == "") {
-            Swal.fire('Uzupełnij wszystkie pola formularza', '', 'info')
-            empty = true;
+            if (nazwa != "" && opis != "" && data == "") {
+                Swal.fire('Pole data jest puste, lub podana data jest niepoprawna', '', 'info')
+                empty = true;
+            } else {
+                Swal.fire('Uzupełnij wszystkie pola formularza', '', 'info')
+                empty = true;
+            }
         } else {
             nazwa = capitalize(nazwa);
         }

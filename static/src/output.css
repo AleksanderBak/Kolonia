@@ -1193,6 +1193,14 @@ input:checked + .toggle-bg {
   margin-bottom: 0.25rem;
 }
 
+.mt-6 {
+  margin-top: 1.5rem;
+}
+
+.mt-8 {
+  margin-top: 2rem;
+}
+
 .block {
   display: block;
 }
@@ -1988,6 +1996,10 @@ input:checked + .toggle-bg {
 
 #submitbutton:disabled {
   background-color: gray;
+}
+
+body {
+  zoom: 0.67;
 }
 
 .hover\:border-gray-300:hover {

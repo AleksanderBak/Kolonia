@@ -34,8 +34,8 @@
     <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script type="text/javascript">
     $('#submitbutton').click(function(){
-        let nazwa = document.getElementById("nazwa").value;
-        let przeznaczenie = document.getElementById("przeznaczenie").value;
+        let nazwa = document.getElementById("nazwa").value.trim();
+        let przeznaczenie = document.getElementById("przeznaczenie").value.trim();
         let miejsca = document.getElementById("miejsca").value;
         let empty = false;
         if (nazwa == "" || przeznaczenie == "" || miejsca == "") {

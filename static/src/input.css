@@ -28,3 +28,7 @@
   #submitbutton:disabled {
     background-color: gray;
   }
+  
+  body {
+    zoom: 0.67;
+  }

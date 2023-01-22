@@ -47,8 +47,8 @@
         document.getElementById('submitbutton').disabled = false;
     });
     $('#submitbutton').click(function(){
-        let imie = document.getElementById("imie").value;
-        let nazwisko = document.getElementById("nazwisko").value;
+        let imie = document.getElementById("imie").value.trim();
+        let nazwisko = document.getElementById("nazwisko").value.trim();
         let wiek = document.getElementById("wiek").value;
         let typ = document.getElementById("typ").value;
         let id = document.getElementById("id").value;
@@ -90,7 +90,7 @@
                     });
                 },
                 error: function () {
-                    Swal.fire('Wystąpił błąd w trakcie edycji kolonizatora.', '', 'error')
+                    Swal.fire('Nie można zedytować kolonizatora ze względu na istniejące zależności w innych tabelach.', '', 'error')
                 }
                 })
             }

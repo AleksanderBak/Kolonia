@@ -39,8 +39,13 @@
         let data = document.getElementById("data").value;
         let empty = false;
         if (nazwa == "" || opis == "" || data == "") {
-            Swal.fire('Uzupełnij wszystkie pola formularza', '', 'info')
-            empty = true;
+            if (nazwa != "" && opis != "" && data == "") {
+                Swal.fire('Pole data jest puste, lub podana data jest niepoprawna', '', 'info')
+                empty = true;
+            } else {
+                Swal.fire('Uzupełnij wszystkie pola formularza', '', 'info')
+                empty = true;
+            }
         } else {
             nazwa = capitalize(nazwa);
         }

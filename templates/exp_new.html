@@ -43,7 +43,7 @@
     <script type="text/javascript">
     $('#submitbutton').click(function(){
         let id_osoby = document.getElementById("id_osoby").value;
-        let nazwa = document.getElementById("nazwa").value;
+        let nazwa = document.getElementById("nazwa").value.trim();
         let liczba_lat = document.getElementById("liczba_lat").value;
         let empty = false;
         if (id_osoby == "" || liczba_lat == "" || nazwa == "") {

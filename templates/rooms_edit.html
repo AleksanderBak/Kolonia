@@ -37,12 +37,12 @@
         document.getElementById('submitbutton').disabled = false;
     });
     $('#submitbutton').click(function(){
-        let nazwa = document.getElementById("nazwa").value;
+        let nazwa = document.getElementById("nazwa").value.trim();
         let opis = document.getElementById("opis").value;
         let id = document.getElementById("nr_pomieszczenia").value;
         let empty = false;
-        if (nazwa == "" || opis == "") {
-            Swal.fire('Uzupełnij wszystkie pola formularza', '', 'info')
+        if (nazwa == "") {
+            Swal.fire('Uzupełnij polę nazwa', '', 'info')
             empty = true;
         } else {
             nazwa = capitalize(nazwa)

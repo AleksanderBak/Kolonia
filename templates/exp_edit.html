@@ -49,7 +49,7 @@
     });
     $('#submitbutton').click(function(){
         let id_os = document.getElementById("id_os").value;
-        let nazwa = document.getElementById("nazwa").value;
+        let nazwa = document.getElementById("nazwa").value.trim();
         let lata = document.getElementById("liczba_lat").value;
         let empty = false;
         if (id_os == "" || lata == "" || nazwa == "") {

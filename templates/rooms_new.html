@@ -31,11 +31,11 @@
     <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script type="text/javascript">
     $('#submitbutton').click(function(){
-        let nazwa = document.getElementById("nazwa").value;
+        let nazwa = document.getElementById("nazwa").value.trim();
         let opis = document.getElementById("opis").value;
         let empty = false;
-        if (nazwa == "" || opis == "") {
-            Swal.fire('Uzupełnij wszystkie pola formularza', '', 'info')
+        if (nazwa == "") {
+            Swal.fire('Uzupełnij polę nazwa', '', 'info')
             empty = true;
         } else {
             nazwa = capitalize(nazwa)
